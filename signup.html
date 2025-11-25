@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up Page</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        background: #fff;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 450px;
+        min-height: 100vh;
+    }
+
+    /* LEFT SIDE FORM */
+    .form-section {
+        padding: 60px 80px;
+    }
+
+    h1 {
+        font-size: 32px;
+        margin-bottom: 40px;
+        font-weight: 800;
+        color: #111;
+    }
+
+    label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #111;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #e4e4e4;
+        border-radius: 8px;
+        font-size: 14px;
+        margin-bottom: 22px;
+        background: #fafafa;
+    }
+
+    textarea {
+        height: 110px;
+        resize: none;
+    }
+
+    .row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 16px;
+        background: #000;
+        color: #fff;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    /* RIGHT SIDE IMAGE SECTION */
+    .image-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .image-section img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scale(1.1) rotate(1.5deg);
+    }
+
+    /* WAVE CLIP EFFECT */
+    .image-section {
+        clip-path: path("M 0 0 L 100% 0 L 100% 100% C 80% 80% 40% 100% 0 60% Z");
+    }
+
+    /* GO BACK button */
+    .back-btn {
+        position: absolute;
+        top: 40px;
+        right: 40px;
+        background: #000;
+        color: #fff;
+        padding: 10px 22px;
+        border-radius: 8px;
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LEFT SIDE FORM -->
+    <div class="form-section">
+
+        <h1>Sign Up</h1>
+
+        <div class="row-2">
+            <div>
+                <label>First name</label>
+                <input type="text" placeholder="Jane">
+            </div>
+            <div>
+                <label>Last name</label>
+                <input type="text" placeholder="Smitherton">
+            </div>
+        </div>
+
+        <label>Email address</label>
+        <input type="email" placeholder="email@janesfakedomain.net">
+
+        <label>Password</label>
+        <input type="password" placeholder="Enter your password">
+
+        <label>Your activities</label>
+        <textarea placeholder="Enter your question or message"></textarea>
+
+        <button class="submit-btn">Sign Up Now</button>
+    </div>
+
+    <!-- RIGHT SIDE IMAGE WITH WAVE SHAPE -->
+    <div class="image-section">
+        <a href="#" class="back-btn">GO BACK</a>
+
+        <img src="img/img5.png"  alt="Signup Image">
+    </div>
+
+</div>
+
+</body>
+</html>
