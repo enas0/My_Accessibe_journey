@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <title>خريطة الأردن - سياحة ذوي الإعاقة</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        direction: rtl;
+        text-align: right;
+        background: #f0f0f0;
+      }
+
+      #app {
+        display: flex;
+        width: 100%;
+        max-width: 1000px;
+        height: 450px;
+        margin: 30px auto;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      #sidebar {
+        width: 260px;
+        padding: 15px;
+        box-sizing: border-box;
+        border-left: 1px solid #ddd;
+        background: #f7f7f7;
+        font-size: 14px;
+      }
+
+      #sidebar h2 {
+        margin-top: 0;
+        font-size: 18px;
+      }
+
+      #sidebar button {
+        width: 100%;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        cursor: pointer;
+        background: #fff;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      #sidebar button:hover {
+        background: #e6e6e6;
+      }
+
+      #sidebar small {
+        display: block;
+        margin-top: 6px;
+        color: #555;
+      }
+
+      #voice-status,
+      #last-command {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #444;
+        min-height: 18px;
+      }
+
+      #map {
+        flex: 1;
+        height: 100%;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <div id="sidebar">
+        <h2>إلى أين تريد الذهاب؟</h2>
+
+        <button onclick="startNavigation('petra')">البتراء</button>
+        <button onclick="startNavigation('jerash')">جرش</button>
+        <button onclick="startNavigation('deadSea')">البحر الميت</button>
+        <button onclick="startNavigation('aqaba')">العقبة</button>
+
+        <hr />
+
+        <button onclick="startListening()">🎤 اضغط وتكلّم</button>
+        <small
+          >جرّب تقول: "البتراء" أو "جرش" أو "البحر الميت" أو "العقبة"</small
+        >
+
+        <div id="voice-status"></div>
+        <div id="last-command"></div>
+      </div>
+
+      <div id="map"></div>
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+      var map = L.map("map").setView([31.0, 36.0], 7);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors",
+      }).addTo(map);
+
+      var routingControl = null;
+      var userMarker = null;
+      var watchId = null;
+
+      var petraDirections = `
+      <b>البتراء - مسار مقترح لذوي الإعاقة</b><br><br>
+      1- لما توصل لموقف السيارات الرئيسي، روح باتجاه البوابة (في منحدر للكراسي المتحركة).<br>
+      2- امشِ دغري على المسار المعبد تقريباً 200 متر.<br>
+      3- تابع اللوحات اللي مكتوب عليها "Visitor Center".<br>
+      4- عند مركز الزوار، اطلب خريطة للمسارات المناسبة لذوي الإعاقة.<br>
+      5- اسأل عن أقرب مسار مهيّأ لنقاط المشاهدة الآمنة.<br><br>
+      <i>ملاحظة: هاي تعليمات عامة، مش بديل عن وجود مرافق.</i>
+    `;
+
+      var jerashDirections = `
+      <b>جرش - مسار مقترح لذوي الإعاقة</b><br><br>
+      1- أول ما تدخل، اتبع المسار المبلط باتجاه شارع الأعمدة.<br>
+      2- أغلب المنطقة مستوية بس في مناطق بدها انتباه.<br>
+      3- يُفضّل تستخدم المسارات المخصصة لسهولة الحركة قدر الإمكان.<br>
+      4- في مسارات جانبية فيها منحدرات مناسبة للكراسي المتحركة.<br><br>
+      <i>يفضل يكون مع الشخص مرافق ببعض النقاط.</i>
+    `;
+
+      var deadSeaDirections = `
+      <b>البحر الميت - مسار مقترح لذوي الإعاقة</b><br><br>
+      1- أغلب المنتجعات فيها ممرات منحدرة للكراسي المتحركة.<br>
+      2- احكي مع الاستقبال عن أقرب طريق مناسب للشاطئ.<br>
+      3- انتبه، الشاطئ ممكن يكون فيه مناطق غير مستوية.<br>
+      4- في مسارات مخصصة للوصول الآمن للمياه إذا متوفرة.<br><br>
+      <i>بننصح باستخدام كرسي خاص للمشي على الرمل لو موجود.</i>
+    `;
+
+      var aqabaDirections = `
+      <b>العقبة - مسار مقترح لذوي الإعاقة</b><br><br>
+      1- بالشاطئ الجنوبي في ممرات طويلة ومنحدرات مهيأة.<br>
+      2- اتبع المسار الرئيسي من الموقف باتجاه الشاطئ.<br>
+      3- اسأل عن الكرسي البحري المخصص لذوي الإعاقة للنزول للمي.<br>
+      4- أغلب المسارات هناك مسطحة وسهلة الحركة.<br><br>
+      <i>العقبة من أفضل المناطق مناسبة لذوي الإعاقة مقارنة بغيرها.</i>
+    `;
+
+      var petraMarker = L.marker([30.3285, 35.4444])
+        .addTo(map)
+        .bindPopup(petraDirections);
+      var jerashMarker = L.marker([32.2808, 35.8947])
+        .addTo(map)
+        .bindPopup(jerashDirections);
+      var deadSeaMarker = L.marker([31.559, 35.4732])
+        .addTo(map)
+        .bindPopup(deadSeaDirections);
+      var aqabaMarker = L.marker([29.5329, 35.0063])
+        .addTo(map)
+        .bindPopup(aqabaDirections);
+
+      var places = {
+        petra: {
+          name: "البتراء",
+          coords: [30.3285, 35.4444],
+          marker: petraMarker,
+        },
+        jerash: {
+          name: "جرش",
+          coords: [32.2808, 35.8947],
+          marker: jerashMarker,
+        },
+        deadSea: {
+          name: "البحر الميت",
+          coords: [31.559, 35.4732],
+          marker: deadSeaMarker,
+        },
+        aqaba: {
+          name: "العقبة",
+          coords: [29.5329, 35.0063],
+          marker: aqabaMarker,
+        },
+      };
+
+      function startNavigation(key) {
+        var place = places[key];
+        if (!place) return;
+
+        if (watchId !== null) {
+          navigator.geolocation.clearWatch(watchId);
+          watchId = null;
+        }
+
+        place.marker.openPopup();
+
+        if (!navigator.geolocation) {
+          speak("جهازك لا يدعم تحديد الموقع. رح نعرض بس المكان على الخريطة.");
+          map.setView(place.coords, 10);
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            var userLat = position.coords.latitude;
+            var userLng = position.coords.longitude;
+            var userCoords = [userLat, userLng];
+
+            map.setView(userCoords, 17);
+
+            if (userMarker) {
+              userMarker.setLatLng(userCoords);
+            } else {
+              userMarker = L.circleMarker(userCoords, {
+                radius: 7,
+              })
+                .addTo(map)
+                .bindPopup("موقعك الحالي");
+            }
+            userMarker.openPopup();
+
+            drawRoute(userCoords, place);
+            startWatchingUserPosition(place);
+          },
+          function (error) {
+            console.error(error);
+            speak("ما قدرنا نحدد موقعك الحالي. رح نعرض المكان بس على الخريطة.");
+            map.setView(place.coords, 10);
+          }
+        );
+      }
+
+      function startWatchingUserPosition(place) {
+        if (!navigator.geolocation) return;
+
+        watchId = navigator.geolocation.watchPosition(
+          function (pos) {
+            var lat = pos.coords.latitude;
+            var lng = pos.coords.longitude;
+            var newCoords = [lat, lng];
+
+            if (userMarker) {
+              userMarker.setLatLng(newCoords);
+            } else {
+              userMarker = L.circleMarker(newCoords, {
+                radius: 7,
+              })
+                .addTo(map)
+                .bindPopup("موقعك الحالي");
+            }
+
+            map.setView(newCoords, 17);
+          },
+          function (err) {
+            console.error("Error in watchPosition:", err);
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 5000,
+            timeout: 20000,
+          }
+        );
+      }
+
+      function drawRoute(userCoords, place) {
+        if (routingControl) {
+          map.removeControl(routingControl);
+        }
+
+        routingControl = L.Routing.control({
+          waypoints: [
+            L.latLng(userCoords[0], userCoords[1]),
+            L.latLng(place.coords[0], place.coords[1]),
+          ],
+          routeWhileDragging: false,
+          addWaypoints: false,
+          draggableWaypoints: false,
+          show: false,
+          fitSelectedRoutes: true,
+          showAlternatives: false,
+        }).addTo(map);
+
+        routingControl.on("routesfound", function (e) {
+          var route = e.routes[0];
+          var distanceKm = (route.summary.totalDistance / 1000).toFixed(1);
+          var durationMin = Math.round(route.summary.totalTime / 60);
+
+          var voiceText =
+            "تم بدء التوجيه إلى " +
+            place.name +
+            ". المسافة تقريباً " +
+            distanceKm +
+            " كيلومتر، " +
+            "والوقت المتوقع " +
+            durationMin +
+            " دقيقة. " +
+            "اتبع المسار الظاهر على الخريطة.";
+
+          speak(voiceText);
+        });
+
+        routingControl.on("routingerror", function (e) {
+          console.error(e);
+          speak(
+            "تعذر حساب المسار إلى " + place.name + ". حاول مرة ثانية لاحقاً."
+          );
+        });
+      }
+
+      var availableVoices = [];
+
+      function loadVoices() {
+        availableVoices = window.speechSynthesis.getVoices() || [];
+      }
+
+      if ("speechSynthesis" in window) {
+        loadVoices();
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+
+      function speak(text) {
+        if (!("speechSynthesis" in window)) {
+          console.warn("speechSynthesis مش مدعوم بهذا المتصفح");
+          return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        var utterance = new SpeechSynthesisUtterance(text);
+
+        var arabicVoice = null;
+        if (availableVoices && availableVoices.length) {
+          arabicVoice = availableVoices.find(function (v) {
+            return (
+              v.name &&
+              v.name.includes("Google") &&
+              v.lang &&
+              v.lang.toLowerCase().startsWith("ar")
+            );
+          });
+
+          if (!arabicVoice) {
+            arabicVoice = availableVoices.find(function (v) {
+              return v.lang && v.lang.toLowerCase().startsWith("ar");
+            });
+          }
+        }
+
+        if (arabicVoice) {
+          utterance.voice = arabicVoice;
+          utterance.lang = arabicVoice.lang;
+        } else {
+          utterance.lang = "ar-SA";
+        }
+
+        utterance.rate = 1;
+        utterance.pitch = 1;
+
+        window.speechSynthesis.speak(utterance);
+      }
+
+      var recognition = null;
+      var voiceStatusEl = document.getElementById("voice-status");
+      var lastCommandEl = document.getElementById("last-command");
+
+      if (
+        "SpeechRecognition" in window ||
+        "webkitSpeechRecognition" in window
+      ) {
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SR();
+
+        recognition.lang = "ar-JO";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = function () {
+          voiceStatusEl.textContent = "🎤 عم بسمعك... احكي";
+        };
+
+        recognition.onerror = function (event) {
+          voiceStatusEl.textContent = "صار خطأ بالتعرف على الصوت.";
+          console.error(event);
+        };
+
+        recognition.onend = function () {
+          voiceStatusEl.textContent = "";
+        };
+
+        recognition.onresult = function (event) {
+          var transcript = event.results[0][0].transcript.trim();
+          lastCommandEl.textContent = "سمعت: " + transcript;
+          handleVoiceCommand(transcript);
+        };
+      } else {
+        voiceStatusEl.textContent =
+          "❌ متصفحك ما بدعم التعرف على الصوت (جرب Google Chrome).";
+      }
+
+      function startListening() {
+        if (!recognition) {
+          alert(
+            "متصفحك ما بدعم التعرف على الصوت. حاول تفتح الموقع من جوجل كروم."
+          );
+          return;
+        }
+        recognition.start();
+      }
+
+      function handleVoiceCommand(text) {
+        var normalized = text.replace("ال", "").trim();
+
+        if (normalized.includes("بترا") || text.includes("البتراء")) {
+          startNavigation("petra");
+        } else if (normalized.includes("جرش")) {
+          startNavigation("jerash");
+        } else if (text.includes("البحر الميت") || normalized.includes("ميت")) {
+          startNavigation("deadSea");
+        } else if (text.includes("العقبة") || normalized.includes("عقبة")) {
+          startNavigation("aqaba");
+        } else {
+          speak(
+            "ما فهمت المكان اللي حكيت عنه. جرّب تقول: البتراء، جرش، البحر الميت، أو العقبة."
+          );
+          alert(
+            "ما قدرت أميز المكان من الجملة: " +
+              text +
+              "\nجرّب تقول: البتراء، جرش، البحر الميت، أو العقبة."
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
