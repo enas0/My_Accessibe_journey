@@ -35,82 +35,87 @@
   @media (min-width:1024px){ .hero-height { height: 420px; } }
   @media (max-width:1023px){ .hero-height { height: 320px; } }
 
- /* ====== Footer ====== */
-.footer {
-  margin-top: 80px;
-  padding: 50px 0;
-  border-top: 2px solid #e3e3e3;
-  display: flex;
-  justify-content: space-between;
-  gap: 60px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.footer-left {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.footer-logo {
-  width: 120px;
-  height: auto;
-  object-fit: contain;
-}
-
-.social-icons {
-  display: flex;
-  gap: 16px;
-}
-
-.social-icons img {
-  width: 22px;
-  height: 22px;
-  opacity: 0.75;
-  transition: opacity .2s;
-}
-
-.social-icons img:hover {
-  opacity: 1;
-}
-
-.footer-columns {
-  display: flex;
-  gap: 80px;
-  flex-wrap: wrap;
-}
-
-.footer-col h4 {
-  font-size: 15px;
-  margin-bottom: 12px;
-  font-weight: 700;
-  color: #000;
-}
-
-.footer-col a {
-  display: block;
-  font-size: 14px;
-  color: #626262;
-  text-decoration: none;
-  margin-bottom: 8px;
-}
-
-.footer-col a:hover {
-  color: #000;
-}
-
-/* Responsive */
-@media (max-width: 780px) {
-  .footer {
-    flex-direction: column;
-    gap: 40px;
+ 
+     /* Footer */
+  footer.site-footer{
+    border-top:1px solid #eee;
+    padding:28px var(--pad);
+    background: #fff;
   }
-  
-  .footer-columns {
-    gap: 40px;
+
+  .footer-inner{
+    max-width:var(--max-width);
+    margin: 2px  auto;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:24px;
+    padding: 30px;
+    align-items:start;
   }
-}
+
+  /* Left column: brand + social */
+  .footer-brand{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .brand-name{
+    font-weight:600;
+  }
+  .brand-name img{
+    height:120px;
+    width:150px;
+    display:block;
+  }
+  .social{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .social a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#f2f4f6;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+  }
+
+  /* Right: lists — use 3 columns */
+  .footer-links{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(120px,1fr));
+    gap:18px 36px;
+    align-items:start;
+  }
+  .links-column h4{
+    margin:0 0 12px 0;
+    font-size:14px;
+    font-weight:700;
+  }
+  .links-column ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .links-column a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+  }
+
+  /* Responsive */
+  @media (max-width:880px){
+    .footer-inner{ grid-template-columns: 1fr; }
+    .footer-links{ grid-template-columns: repeat(2, minmax(120px,1fr)); margin-top:8px; }
+  }
 
 </style>
 </head>
@@ -214,43 +219,74 @@
 
 </main>
 
-<!-- FOOTER -->
+    <footer class="site-footer" role="contentinfo" aria-label="Footer">
+      <div class="footer-inner">
 
-  <footer class="footer">
-  <div class="footer-left">
-    <img src="img/logo_black.png" alt="My Accessible Journey logo" class="footer-logo" />
+        <!-- Left: brand + social icons -->
+        <div class="footer-brand" aria-hidden="false">
+          <div class="brand-name"><img src="img/logo_black.png"></div>
 
-    <div class="social-icons">
-      <a href="#"><img src="img/Icon_feacbook.png" alt="Facebook" /></a>
-      <a href="#"><img src="img/Icon_linkdIn.png" alt="LinkedIn" /></a>
-      <a href="#"><img src="img/Icon_youtube.png" alt="YouTube" /></a>
-      <a href="#"><img src="img/Icon_insta.png" alt="Instagram" /></a>
-    </div>
-  </div>
+          <!-- social icons (SVGs kept simple) -->
+          <div class="social" aria-label="Social links">
+            <a href="#" aria-label="Facebook" title="Facebook" role="link">
+              <!-- facebook glyph -->
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22 12.07C22 6.48 17.52 2 12 2S2 6.48 2 12.07c0 4.99 3.66 9.12 8.44 9.93v-7.03H7.9v-2.9h2.54V9.41c0-2.5 1.49-3.87 3.77-3.87 1.09 0 2.23.2 2.23.2v2.46h-1.25c-1.23 0-1.61.77-1.61 1.56v1.88h2.74l-.44 2.9h-2.3v7.03C18.34 21.19 22 17.06 22 12.07z" fill="#6b7280"/>
+              </svg>
+            </a>
 
-  <div class="footer-columns">
-    <div class="footer-col">
-      <h4>Explore</h4>
-      <a href="#">Home</a>
-      <a href="#">Destinations</a>
-      <a href="#">Volunteers</a>
-    </div>
+            <a href="#" aria-label="LinkedIn" title="LinkedIn" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 3H4a1 1 0 00-1 1v16a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1zM9.5 18H7.2V10.5h2.3V18zM8.35 9.4a1.3 1.3 0 110-2.6 1.3 1.3 0 010 2.6zM18 18h-2.3v-3.6c0-.86-.02-1.97-1.2-1.97-1.2 0-1.38.93-1.38 1.9V18H10.1V10.5h2.2v.99h.03c.31-.59 1.07-1.21 2.2-1.21 2.35 0 2.78 1.55 2.78 3.57V18z" fill="#6b7280"/>
+              </svg>
+            </a>
 
-    <div class="footer-col">
-      <h4>Community</h4>
-      <a href="#">Share Your Experience</a>
-      <a href="#">Success Stories</a>
-      <a href="#">Feedback</a>
-    </div>
+            <a href="#" aria-label="YouTube" title="YouTube" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M23.5 6.2s-.2-1.6-.8-2.3c-.8-.9-1.7-.9-2.2-1-3-.2-7.5-.2-7.5-.2h-.1s-4.5 0-7.5.2c-.5.1-1.4.2-2.2 1-.6.7-.8 2.3-.8 2.3S1 8 1 9.8v2.4C1 14 1.2 15.6 1.2 15.6s.2 1.6.8 2.3c.8.9 1.8.9 2.3 1 1.7.1 7.3.2 7.3.2s4.6 0 7.5-.2c.5-.1 1.4-.2 2.2-1 .6-.7.8-2.3.8-2.3s.2-1.6.2-3.4V9.8c0-1.8-.2-3.6-.2-3.6zM9.8 15.1V8.9l5.9 3.1-5.9 3.1z" fill="#6b7280"/>
+              </svg>
+            </a>
 
-    <div class="footer-col">
-      <h4>Support</h4>
-      <a href="#">Contact Us</a>
-      <a href="#">FAQs</a>
-      <a href="#">Accessibility Help</a>
-    </div>
-  </div>
-</footer>
+            <a href="#" aria-label="Instagram" title="Instagram" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 7.4A4.6 4.6 0 1012 16.6 4.6 4.6 0 0012 7.4zm0 7.6a3 3 0 110-6 3 3 0 010 6zM17.8 6.7a1.07 1.07 0 11-2.14 0 1.07 1.07 0 012.14 0zM21 12c0 2.3-.06 3.6-.3 4.9-.25 1.4-.7 2.2-1.3 2.9-.6.7-1.5 1.2-2.9 1.5-1.2.2-2.6.3-4.5.3s-3.3-.1-4.5-.3c-1.4-.3-2.3-.8-2.9-1.5-.6-.7-1-1.5-1.3-2.9C3.1 15.6 3 14.3 3 12s.06-3.6.3-4.9c.25-1.4.7-2.2 1.3-2.9C5.3 2.9 6.3 2.4 7.7 2.1 8.9 1.9 10.3 1.8 12 1.8s3.1.1 4.3.3c1.4.3 2.3.8 2.9 1.5.6.7 1 1.5 1.3 2.9.2 1.3.3 2.6.3 4.0z" fill="#6b7280"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: three link columns -->
+        <div class="footer-links" role="navigation" aria-label="Footer links">
+          <div class="links-column">
+            <h4>Explore</h4>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Destinations</a></li>
+              <li><a href="#">Volunteers</a></li>
+            </ul>
+          </div>
+
+          <div class="links-column">
+            <h4>Community</h4>
+            <ul>
+              <li><a href="#">Share Your Experience</a></li>
+              <li><a href="#">Success Stories</a></li>
+              <li><a href="#">Feedback</a></li>
+            </ul>
+          </div>
+
+          <div class="links-column">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Accessibility Help</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </footer>
 
 <!-- Modal 360 -->
 <div id="overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60">
