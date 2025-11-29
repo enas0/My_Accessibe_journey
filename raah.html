@@ -18,6 +18,15 @@
   }
   html,body { height:100%; }
   body { font-family: "Tajawal", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--brand); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .header-logo {
+  height: 80px;
+  width:150px;        /* اضبط حسب حجم لوغوك */
+  object-fit: contain;
+  display: block;
+}
+
+
+  
   .hero-bg { background-size: cover; background-position: center; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; overflow: hidden; }
   .search-ghost { background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border-radius: 40px; box-shadow: 0 8px 30px rgba(2,6,23,0.08); }
   .card-hover { transform: translateY(0); transition: transform .22s ease, box-shadow .22s ease; }
@@ -25,6 +34,84 @@
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   @media (min-width:1024px){ .hero-height { height: 420px; } }
   @media (max-width:1023px){ .hero-height { height: 320px; } }
+
+ /* ====== Footer ====== */
+.footer {
+  margin-top: 80px;
+  padding: 50px 0;
+  border-top: 2px solid #e3e3e3;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer-logo {
+  width: 120px;
+  height: auto;
+  object-fit: contain;
+}
+
+.social-icons {
+  display: flex;
+  gap: 16px;
+}
+
+.social-icons img {
+  width: 22px;
+  height: 22px;
+  opacity: 0.75;
+  transition: opacity .2s;
+}
+
+.social-icons img:hover {
+  opacity: 1;
+}
+
+.footer-columns {
+  display: flex;
+  gap: 80px;
+  flex-wrap: wrap;
+}
+
+.footer-col h4 {
+  font-size: 15px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: #000;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: #626262;
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.footer-col a:hover {
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 780px) {
+  .footer {
+    flex-direction: column;
+    gap: 40px;
+  }
+  
+  .footer-columns {
+    gap: 40px;
+  }
+}
+
 </style>
 </head>
 <body class="antialiased">
@@ -32,15 +119,8 @@
 <!-- NAV -->
 <header class="fixed inset-x-0 top-0 z-40 bg-white/60 backdrop-blur-sm border-b border-gray-100">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-3">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" class="text-brand"><path d="M3 6.5L12 2l9 4.5v11L12 22 3 17.5v-11z" stroke="#111827" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <div>
-          <div class="text-sm font-semibold text-[var(--brand)]">My Accessible Journey</div>
-          <div class="text-xs text-[var(--muted)]">Jordan — 360 tours</div>
-        </div>
-      </div>
-    </div>
+     <img src="img/logo_black.png" alt="My Accessible Journey" class="header-logo" />
+
 
     <nav class="hidden md:flex items-center gap-6 text-sm">
       <a class="text-[var(--brand)] hover:text-gray-700" href="#">Home</a>
@@ -135,49 +215,39 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="border-t border-gray-100 bg-white">
-  <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div>
-      <div class="flex items-center gap-3">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M3 6.5L12 2l9 4.5v11L12 22 3 17.5v-11z" stroke="#111827" stroke-width="0.9"/></svg>
-        <div>
-          <div class="text-sm font-semibold">My Accessible Journey</div>
-          <div class="text-xs text-[var(--muted)]">Explore Jordan — accessibility first</div>
-        </div>
-      </div>
-      <div class="flex gap-3 mt-4 text-sm text-[var(--muted)]">
-        <a href="#" aria-label="facebook">Fb</a>
-        <a href="#" aria-label="linkedin">Li</a>
-        <a href="#" aria-label="youtube">Yt</a>
-        <a href="#" aria-label="instagram">Ig</a>
-      </div>
+
+  <footer class="footer">
+  <div class="footer-left">
+    <img src="img/logo_black.png" alt="My Accessible Journey logo" class="footer-logo" />
+
+    <div class="social-icons">
+      <a href="#"><img src="img/Icon_feacbook.png" alt="Facebook" /></a>
+      <a href="#"><img src="img/Icon_linkdIn.png" alt="LinkedIn" /></a>
+      <a href="#"><img src="img/Icon_youtube.png" alt="YouTube" /></a>
+      <a href="#"><img src="img/Icon_insta.png" alt="Instagram" /></a>
+    </div>
+  </div>
+
+  <div class="footer-columns">
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="#">Home</a>
+      <a href="#">Destinations</a>
+      <a href="#">Volunteers</a>
     </div>
 
-    <div>
-      <h4 class="font-semibold mb-2">Explore</h4>
-      <ul class="text-sm text-[var(--muted)] space-y-2">
-        <li>Home</li>
-        <li>Destinations</li>
-        <li>Volunteers</li>
-      </ul>
+    <div class="footer-col">
+      <h4>Community</h4>
+      <a href="#">Share Your Experience</a>
+      <a href="#">Success Stories</a>
+      <a href="#">Feedback</a>
     </div>
 
-    <div>
-      <h4 class="font-semibold mb-2">Community</h4>
-      <ul class="text-sm text-[var(--muted)] space-y-2">
-        <li>Share Your Experience</li>
-        <li>Success Stories</li>
-        <li>Feedback</li>
-      </ul>
-    </div>
-
-    <div>
-      <h4 class="font-semibold mb-2">Support</h4>
-      <ul class="text-sm text-[var(--muted)] space-y-2">
-        <li>Contact Us</li>
-        <li>FAQs</li>
-        <li>Accessibility Help</li>
-      </ul>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Contact Us</a>
+      <a href="#">FAQs</a>
+      <a href="#">Accessibility Help</a>
     </div>
   </div>
 </footer>
