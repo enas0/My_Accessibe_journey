@@ -2,124 +2,581 @@
 <html lang="ar">
   <head>
     <meta charset="UTF-8" />
-    <title>خريطة الأردن - سياحة ذوي الإعاقة</title>
+    <title>Smart Map for Easier Travel</title>
 
+    <!-- ========== BASIC STYLE / LAYOUT ========== -->
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
         font-family: Arial, sans-serif;
-        direction: rtl;
-        text-align: right;
-        background: #f0f0f0;
+        background: #f5f5f5;
+        color: #111827;
       }
 
-      #app {
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+     /* === Header container === */
+.nav {
+  display: flex;
+  justify-content: space-between; /* logo left – nav right */
+  align-items: center;
+  height: 50px;
+  padding: 0 24px;
+  margin-bottom: 28px;
+}
+
+/* === Logo (left) === */
+.header-logo {
+  width: 135px;    
+  height: auto;
+  object-fit: contain;
+}
+
+/* === Navigation (right) === */
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 40px;      /* space between links */
+  white-space: nowrap;
+}
+
+/* === Links === */
+.nav-link {
+  color: #6f6f6f;
+  font-size: 16px;
+  text-decoration: none;
+  transition: 0.15s;
+}
+
+.nav-link:hover {
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* === Back button === */
+.btn-back {
+  background: #000;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.15s;
+}
+
+.btn-back:hover {
+  opacity: 0.9;
+}
+
+/* === Responsive for small screens === */
+@media (max-width: 900px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 20px;
+  }
+
+  .nav-center {
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 10px;
+  }
+}
+
+
+
+      /* ===== TITLE / HERO TEXT ===== */
+      .hero {
+        max-width: 1200px;
+        margin: 12px auto 24px;
+        text-align: center;
+        padding: 0 16px;
+      }
+
+      .hero h1 {
+        margin: 8px 0;
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .hero p {
+        margin: 0;
+        font-size: 14px;
+        color: #6b7280;
+      }
+
+      /* ===== MAP + CARD WRAPPER ===== */
+      .map-section {
+        max-width: 1200px;
+        margin: 24px auto 16px;
+        padding: 0 16px;
+      }
+
+      .map-card-wrapper {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(15, 23, 42, 0.12);
+        padding: 16px;
         display: flex;
-        width: 100%;
-        max-width: 1000px;
-        height: 450px;
-        margin: 30px auto;
-        background: #fff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        border-radius: 10px;
+        gap: 16px;
+        min-height: 360px;
+      }
+
+      .map-container {
+        flex: 1.4;
+        border-radius: 16px;
         overflow: hidden;
       }
 
-      #sidebar {
-        width: 260px;
-        padding: 15px;
-        box-sizing: border-box;
-        border-left: 1px solid #ddd;
-        background: #f7f7f7;
-        font-size: 14px;
+      #map {
+        width: 100%;
+        height: 330px;
       }
 
-      #sidebar h2 {
-        margin-top: 0;
+      .place-card {
+        flex: 1;
+        border-radius: 16px;
+        background: #f9fafb;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        display: none; /* مخفي بالبداية */
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .place-card-image {
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+      }
+
+      .place-card-body {
+        padding: 14px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .place-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .place-location {
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .place-description {
+        font-size: 12px;
+        color: #4b5563;
+        margin-top: 4px;
+      }
+
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+
+      .badge {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid #d1d5db;
+        background: #e5e7eb;
+      }
+
+      .place-card-footer {
+        margin-top: auto;
+      }
+
+      .btn-plan {
+        width: 100%;
+        padding: 8px 0;
+        border-radius: 999px;
+        border: none;
+        background: #111827;
+        color: #ffffff;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .btn-plan:hover {
+        opacity: 0.9;
+      }
+
+      /* ===== ACTIONS ROW (BUTTONS + VOICE) ===== */
+      .actions-row {
+        max-width: 1200px;
+        margin: 18px auto 32px;
+        padding: 0 16px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .places-area {
+        flex: 1.4;
+      }
+
+      .places-area-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .place-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .place-buttons button {
+        min-width: 90px;
+        padding: 8px 16px;
+        border-radius: 10px;
+        border: none;
+        background: #111827;
+        color: #ffffff;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .place-buttons button:hover {
+        opacity: 0.92;
+      }
+
+      .voice-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .voice-box {
+        background: #ffffff;
+        border-radius: 999px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        padding: 8px 10px 8px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .voice-label {
+        font-size: 13px;
+        color: #4b5563;
+      }
+
+      .mic-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: none;
+        background: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #ffffff;
         font-size: 18px;
       }
 
-      #sidebar button {
-        width: 100%;
-        padding: 8px 10px;
-        margin-bottom: 8px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        cursor: pointer;
-        background: #fff;
-        font-size: 14px;
-        text-align: center;
+      .mic-button:hover {
+        opacity: 0.92;
       }
 
-      #sidebar button:hover {
-        background: #e6e6e6;
-      }
-
-      #sidebar small {
-        display: block;
-        margin-top: 6px;
-        color: #555;
+      .voice-hints {
+        font-size: 11px;
+        color: #6b7280;
+        line-height: 1.4;
       }
 
       #voice-status,
       #last-command {
-        margin-top: 8px;
-        font-size: 12px;
-        color: #444;
-        min-height: 18px;
+        font-size: 11px;
+        color: #4b5563;
       }
 
-      #map {
-        flex: 1;
-        height: 100%;
-      }
+       /* Footer */
+  footer.site-footer{
+    border-top:1px solid #eee;
+    padding:28px var(--pad);
+    background: #fff;
+  }
+
+  .footer-inner{
+    max-width:var(--max-width);
+    margin: 2px  auto;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:24px;
+    padding: 30px;
+    align-items:start;
+  }
+
+  /* Left column: brand + social */
+  .footer-brand{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .brand-name{
+    font-weight:600;
+  }
+  .brand-name img{
+    height:120px;
+    width:150px;
+    display:block;
+  }
+  .social{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .social a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#f2f4f6;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+  }
+
+  /* Right: lists — use 3 columns */
+  .footer-links{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(120px,1fr));
+    gap:18px 36px;
+    align-items:start;
+  }
+  .links-column h4{
+    margin:0 0 12px 0;
+    font-size:14px;
+    font-weight:700;
+  }
+  .links-column ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .links-column a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+  }
+
+  /* Responsive */
+  @media (max-width:880px){
+    .footer-inner{ grid-template-columns: 1fr; }
+    .footer-links{ grid-template-columns: repeat(2, minmax(120px,1fr)); margin-top:8px; }
+  }
+
+
     </style>
 
+    <!-- Leaflet CSS -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
-
+    <!-- Routing Machine CSS -->
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
     />
   </head>
+
   <body>
-    <div id="app">
-      <div id="sidebar">
-        <h2>إلى أين تريد الذهاب؟</h2>
+    <!-- ========== HEADER ========== -->
+    
+   <header class="nav" aria-label="Top navigation">
+        <img src="img/logo_black.png" alt="My Accessible Journey" class="header-logo" />
 
-        <button onclick="startNavigation('petra')">البتراء</button>
-        <button onclick="startNavigation('jerash')">جرش</button>
-        <button onclick="startNavigation('deadSea')">البحر الميت</button>
-        <button onclick="startNavigation('aqaba')">العقبة</button>
+        <nav class="nav-center" aria-label="Primary">
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Map</a>
+            <a href="#" class="nav-link">Travel planing</a>
+            <a href="#" class="nav-link">3d model</a>
+            <a href="#" class="nav-link">search places</a>
+            <button class="btn-back" aria-label="Back">back</button>
+        </nav>
 
-        <hr />
+        
+    </header>
 
-        <button onclick="startListening()">🎤 اضغط وتكلّم</button>
-        <small
-          >جرّب تقول: "البتراء" أو "جرش" أو "البحر الميت" أو "العقبة"</small
-        >
+    <!-- ========== HERO TEXT ========== -->
+    <section class="hero">
+      <h1>Smart Map for Easier Travel</h1>
+      <p>
+        Use the interactive map to discover places and follow clear routes made
+        for everyone
+      </p>
+    </section>
 
-        <div id="voice-status"></div>
-        <div id="last-command"></div>
+    <!-- ========== MAP + CARD ========== -->
+    <section class="map-section">
+      <div class="map-card-wrapper">
+        <div class="map-container">
+          <div id="map"></div>
+        </div>
+
+        <!-- الكارد اللي بتغيّر حسب المكان المختار -->
+        <div class="place-card" id="place-card">
+          <img
+            id="card-image"
+            class="place-card-image"
+            src=""
+            alt="Place image"
+          />
+          <div class="place-card-body">
+            <div class="place-title" id="card-title"></div>
+            <div class="place-location" id="card-location"></div>
+            <div class="place-description" id="card-description"></div>
+
+            <div class="badge-row" id="card-badges"></div>
+
+            <div class="place-card-footer">
+              <button class="btn-plan">Plan Visit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ACTIONS: BUTTONS + VOICE ========== -->
+    <section class="actions-row">
+      <div class="places-area">
+        <div class="places-area-title">?Where do you want to go</div>
+        <div class="place-buttons">
+          <button onclick="startNavigation('petra')">Petra</button>
+          <button onclick="startNavigation('jerash')">Jerash</button>
+          <button onclick="startNavigation('deadSea')">Dead Sea</button>
+          <button onclick="startNavigation('aqaba')">Aqaba</button>
+        </div>
       </div>
 
-      <div id="map"></div>
-    </div>
+      <div class="voice-area">
+        <div class="voice-box">
+          <div>
+            <div class="voice-label">Try speak</div>
+            <div id="voice-status"></div>
+            <div id="last-command"></div>
+          </div>
+          <button class="mic-button" onclick="startListening()">🎤</button>
+        </div>
+        <div class="voice-hints">
+          Try saying the place name with your voice<br />
+          You can say: "Petra", "Jerash", "Dead Sea", or "Aqaba"
+        </div>
+      </div>
+    </section>
 
+    <footer class="site-footer" role="contentinfo" aria-label="Footer">
+      <div class="footer-inner">
+
+        <!-- Left: brand + social icons -->
+        <div class="footer-brand" aria-hidden="false">
+          <div class="brand-name"><img src="img/logo_black.png"></div>
+
+          <!-- social icons (SVGs kept simple) -->
+          <div class="social" aria-label="Social links">
+            <a href="#" aria-label="Facebook" title="Facebook" role="link">
+              <!-- facebook glyph -->
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22 12.07C22 6.48 17.52 2 12 2S2 6.48 2 12.07c0 4.99 3.66 9.12 8.44 9.93v-7.03H7.9v-2.9h2.54V9.41c0-2.5 1.49-3.87 3.77-3.87 1.09 0 2.23.2 2.23.2v2.46h-1.25c-1.23 0-1.61.77-1.61 1.56v1.88h2.74l-.44 2.9h-2.3v7.03C18.34 21.19 22 17.06 22 12.07z" fill="#6b7280"/>
+              </svg>
+            </a>
+
+            <a href="#" aria-label="LinkedIn" title="LinkedIn" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 3H4a1 1 0 00-1 1v16a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1zM9.5 18H7.2V10.5h2.3V18zM8.35 9.4a1.3 1.3 0 110-2.6 1.3 1.3 0 010 2.6zM18 18h-2.3v-3.6c0-.86-.02-1.97-1.2-1.97-1.2 0-1.38.93-1.38 1.9V18H10.1V10.5h2.2v.99h.03c.31-.59 1.07-1.21 2.2-1.21 2.35 0 2.78 1.55 2.78 3.57V18z" fill="#6b7280"/>
+              </svg>
+            </a>
+
+            <a href="#" aria-label="YouTube" title="YouTube" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M23.5 6.2s-.2-1.6-.8-2.3c-.8-.9-1.7-.9-2.2-1-3-.2-7.5-.2-7.5-.2h-.1s-4.5 0-7.5.2c-.5.1-1.4.2-2.2 1-.6.7-.8 2.3-.8 2.3S1 8 1 9.8v2.4C1 14 1.2 15.6 1.2 15.6s.2 1.6.8 2.3c.8.9 1.8.9 2.3 1 1.7.1 7.3.2 7.3.2s4.6 0 7.5-.2c.5-.1 1.4-.2 2.2-1 .6-.7.8-2.3.8-2.3s.2-1.6.2-3.4V9.8c0-1.8-.2-3.6-.2-3.6zM9.8 15.1V8.9l5.9 3.1-5.9 3.1z" fill="#6b7280"/>
+              </svg>
+            </a>
+
+            <a href="#" aria-label="Instagram" title="Instagram" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 7.4A4.6 4.6 0 1012 16.6 4.6 4.6 0 0012 7.4zm0 7.6a3 3 0 110-6 3 3 0 010 6zM17.8 6.7a1.07 1.07 0 11-2.14 0 1.07 1.07 0 012.14 0zM21 12c0 2.3-.06 3.6-.3 4.9-.25 1.4-.7 2.2-1.3 2.9-.6.7-1.5 1.2-2.9 1.5-1.2.2-2.6.3-4.5.3s-3.3-.1-4.5-.3c-1.4-.3-2.3-.8-2.9-1.5-.6-.7-1-1.5-1.3-2.9C3.1 15.6 3 14.3 3 12s.06-3.6.3-4.9c.25-1.4.7-2.2 1.3-2.9C5.3 2.9 6.3 2.4 7.7 2.1 8.9 1.9 10.3 1.8 12 1.8s3.1.1 4.3.3c1.4.3 2.3.8 2.9 1.5.6.7 1 1.5 1.3 2.9.2 1.3.3 2.6.3 4.0z" fill="#6b7280"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: three link columns -->
+        <div class="footer-links" role="navigation" aria-label="Footer links">
+          <div class="links-column">
+            <h4>Explore</h4>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Destinations</a></li>
+              <li><a href="#">Volunteers</a></li>
+            </ul>
+          </div>
+
+          <div class="links-column">
+            <h4>Community</h4>
+            <ul>
+              <li><a href="#">Share Your Experience</a></li>
+              <li><a href="#">Success Stories</a></li>
+              <li><a href="#">Feedback</a></li>
+            </ul>
+          </div>
+
+          <div class="links-column">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Accessibility Help</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+    <!-- ========== SCRIPTS ========== -->
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
-
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <script>
+      // ===== 1) MAP SETUP =====
       var map = L.map("map").setView([31.0, 36.0], 7);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -131,92 +588,175 @@
       var userMarker = null;
       var watchId = null;
 
+      // ===== 2) PLACES DATA (للكارد + الإحداثيات) =====
+// ===== 2) PLACES DATA (للكارد + الإحداثيات) =====
+var places = {
+  deadSea: {
+    key: "deadSea",
+    name: "البحر الميت",
+    coords: [31.559, 35.4732],
+    cardTitle: "Dead Sea Resorts",
+    cardLocation: "Dead Sea · Jordan",
+    cardDescription:
+      "Accessible spa resorts with therapeutic experiences for everyone.",
+    badges: ["Visual", "Hearing", "Physical"],
+    image: "img/dead_sea.webp"      
+  },
+  petra: {
+    key: "petra",
+    name: "البتراء",
+    coords: [30.3285, 35.4444],
+    cardTitle: "Petra",
+    cardLocation: "Petra · Jordan",
+    cardDescription:
+      "Historic rock-cut city with guided paths. Some routes may require assistance for wheelchair users.",
+    badges: ["Cultural", "History"],
+    image: "img/img0.jpg"           
+  },
+  jerash: {
+    key: "jerash",
+    name: "جرش",
+    coords: [32.2808, 35.8947],
+    cardTitle: "Jerash Ruins",
+    cardLocation: "Jerash · Jordan",
+    cardDescription:
+      "Roman ruins with partially paved paths. Best enjoyed with an accessible-friendly guide.",
+    badges: ["History", "Culture"],
+    image: "img/img_jerach.png"     
+  },
+  aqaba: {
+    key: "aqaba",
+    name: "العقبة",
+    coords: [29.5329, 35.0063],
+    cardTitle: "Aqaba Beaches",
+    cardLocation: "Aqaba · Jordan",
+    cardDescription:
+      "Seaside city with accessible promenades and adapted beach experiences.",
+    badges: ["Sea", "Relax"],
+    image: "img/aile.jpg"           
+  }
+};
+
+
+      // ===== 3) POPUP TEXTS (نفسها تقريبًا بالعربي) =====
       var petraDirections = `
-      <b>البتراء - مسار مقترح لذوي الإعاقة</b><br><br>
-      1- لما توصل لموقف السيارات الرئيسي، روح باتجاه البوابة (في منحدر للكراسي المتحركة).<br>
-      2- امشِ دغري على المسار المعبد تقريباً 200 متر.<br>
-      3- تابع اللوحات اللي مكتوب عليها "Visitor Center".<br>
-      4- عند مركز الزوار، اطلب خريطة للمسارات المناسبة لذوي الإعاقة.<br>
-      5- اسأل عن أقرب مسار مهيّأ لنقاط المشاهدة الآمنة.<br><br>
-      <i>ملاحظة: هاي تعليمات عامة، مش بديل عن وجود مرافق.</i>
-    `;
+        <b>البتراء - مسار مقترح لذوي الإعاقة</b><br><br>
+        1- لما توصل لموقف السيارات الرئيسي، روح باتجاه البوابة (في منحدر للكراسي المتحركة).<br>
+        2- امشِ دغري على المسار المعبد تقريباً 200 متر.<br>
+        3- تابع اللوحات اللي مكتوب عليها "Visitor Center".<br>
+        4- عند مركز الزوار، اطلب خريطة للمسارات المناسبة لذوي الإعاقة.<br>
+        5- اسأل عن أقرب مسار مهيّأ لنقاط المشاهدة الآمنة.<br><br>
+        <i>ملاحظة: هاي تعليمات عامة، مش بديل عن وجود مرافق.</i>
+      `;
 
       var jerashDirections = `
-      <b>جرش - مسار مقترح لذوي الإعاقة</b><br><br>
-      1- أول ما تدخل، اتبع المسار المبلط باتجاه شارع الأعمدة.<br>
-      2- أغلب المنطقة مستوية بس في مناطق بدها انتباه.<br>
-      3- يُفضّل تستخدم المسارات المخصصة لسهولة الحركة قدر الإمكان.<br>
-      4- في مسارات جانبية فيها منحدرات مناسبة للكراسي المتحركة.<br><br>
-      <i>يفضل يكون مع الشخص مرافق ببعض النقاط.</i>
-    `;
+        <b>جرش - مسار مقترح لذوي الإعاقة</b><br><br>
+        1- أول ما تدخل، اتبع المسار المبلط باتجاه شارع الأعمدة.<br>
+        2- أغلب المنطقة مستوية بس في مناطق بدها انتباه.<br>
+        3- يُفضّل تستخدم المسارات المخصصة لسهولة الحركة قدر الإمكان.<br>
+        4- في مسارات جانبية فيها منحدرات مناسبة للكراسي المتحركة.<br><br>
+        <i>يفضل يكون مع الشخص مرافق ببعض النقاط.</i>
+      `;
 
       var deadSeaDirections = `
-      <b>البحر الميت - مسار مقترح لذوي الإعاقة</b><br><br>
-      1- أغلب المنتجعات فيها ممرات منحدرة للكراسي المتحركة.<br>
-      2- احكي مع الاستقبال عن أقرب طريق مناسب للشاطئ.<br>
-      3- انتبه، الشاطئ ممكن يكون فيه مناطق غير مستوية.<br>
-      4- في مسارات مخصصة للوصول الآمن للمياه إذا متوفرة.<br><br>
-      <i>بننصح باستخدام كرسي خاص للمشي على الرمل لو موجود.</i>
-    `;
+        <b>البحر الميت - مسار مقترح لذوي الإعاقة</b><br><br>
+        1- أغلب المنتجعات فيها ممرات منحدرة للكراسي المتحركة.<br>
+        2- احكي مع الاستقبال عن أقرب طريق مناسب للشاطئ.<br>
+        3- انتبه، الشاطئ ممكن يكون فيه مناطق غير مستوية.<br>
+        4- في مسارات مخصصة للوصول الآمن للمياه إذا متوفرة.<br><br>
+        <i>بننصح باستخدام كرسي خاص للمشي على الرمل لو موجود.</i>
+      `;
 
       var aqabaDirections = `
-      <b>العقبة - مسار مقترح لذوي الإعاقة</b><br><br>
-      1- بالشاطئ الجنوبي في ممرات طويلة ومنحدرات مهيأة.<br>
-      2- اتبع المسار الرئيسي من الموقف باتجاه الشاطئ.<br>
-      3- اسأل عن الكرسي البحري المخصص لذوي الإعاقة للنزول للمي.<br>
-      4- أغلب المسارات هناك مسطحة وسهلة الحركة.<br><br>
-      <i>العقبة من أفضل المناطق مناسبة لذوي الإعاقة مقارنة بغيرها.</i>
-    `;
+        <b>العقبة - مسار مقترح لذوي الإعاقة</b><br><br>
+        1- بالشاطئ الجنوبي في ممرات طويلة ومنحدرات مهيأة.<br>
+        2- اتبع المسار الرئيسي من الموقف باتجاه الشاطئ.<br>
+        3- اسأل عن الكرسي البحري المخصص لذوي الإعاقة للنزول للمي.<br>
+        4- أغلب المسارات هناك مسطحة وسهلة الحركة.<br><br>
+        <i>العقبة من أفضل المناطق مناسبة لذوي الإعاقة مقارنة بغيرها.</i>
+      `;
 
-      var petraMarker = L.marker([30.3285, 35.4444])
+      // ===== 4) MARKERS =====
+      var petraMarker = L.marker(places.petra.coords)
         .addTo(map)
         .bindPopup(petraDirections);
-      var jerashMarker = L.marker([32.2808, 35.8947])
+      var jerashMarker = L.marker(places.jerash.coords)
         .addTo(map)
         .bindPopup(jerashDirections);
-      var deadSeaMarker = L.marker([31.559, 35.4732])
+      var deadSeaMarker = L.marker(places.deadSea.coords)
         .addTo(map)
         .bindPopup(deadSeaDirections);
-      var aqabaMarker = L.marker([29.5329, 35.0063])
+      var aqabaMarker = L.marker(places.aqaba.coords)
         .addTo(map)
         .bindPopup(aqabaDirections);
 
-      var places = {
-        petra: {
-          name: "البتراء",
-          coords: [30.3285, 35.4444],
-          marker: petraMarker,
-        },
-        jerash: {
-          name: "جرش",
-          coords: [32.2808, 35.8947],
-          marker: jerashMarker,
-        },
-        deadSea: {
-          name: "البحر الميت",
-          coords: [31.559, 35.4732],
-          marker: deadSeaMarker,
-        },
-        aqaba: {
-          name: "العقبة",
-          coords: [29.5329, 35.0063],
-          marker: aqabaMarker,
-        },
-      };
+      places.petra.marker = petraMarker;
+      places.jerash.marker = jerashMarker;
+      places.deadSea.marker = deadSeaMarker;
+      places.aqaba.marker = aqabaMarker;
 
+      // عند الضغط على الماركر نبلش التوجيه + نعرض الكارد
+      petraMarker.on("click", function () {
+        startNavigation("petra");
+      });
+      jerashMarker.on("click", function () {
+        startNavigation("jerash");
+      });
+      deadSeaMarker.on("click", function () {
+        startNavigation("deadSea");
+      });
+      aqabaMarker.on("click", function () {
+        startNavigation("aqaba");
+      });
+
+      // ===== 5) CARD UPDATE =====
+      function showPlaceCard(key) {
+        var place = places[key];
+        if (!place) return;
+
+        var card = document.getElementById("place-card");
+        card.style.display = "flex";
+
+        document.getElementById("card-image").src = place.image;
+        document.getElementById("card-title").textContent = place.cardTitle;
+        document.getElementById("card-location").textContent =
+          place.cardLocation;
+        document.getElementById("card-description").textContent =
+          place.cardDescription;
+
+        var badgesContainer = document.getElementById("card-badges");
+        badgesContainer.innerHTML = "";
+        (place.badges || []).forEach(function (b) {
+          var span = document.createElement("span");
+          span.className = "badge";
+          span.textContent = b;
+          badgesContainer.appendChild(span);
+        });
+      }
+
+      // ===== 6) NAVIGATION (ROUTING + TRACKING) =====
       function startNavigation(key) {
         var place = places[key];
         if (!place) return;
 
+        // نحدّث الكارد
+        showPlaceCard(key);
+
+        // نوقف أي تتبع قديم
         if (watchId !== null) {
           navigator.geolocation.clearWatch(watchId);
           watchId = null;
         }
 
-        place.marker.openPopup();
+        // نفتح البوب أب
+        if (place.marker) {
+          place.marker.openPopup();
+        }
 
         if (!navigator.geolocation) {
-          speak("جهازك لا يدعم تحديد الموقع. رح نعرض بس المكان على الخريطة.");
+          speak(
+            "جهازك لا يدعم تحديد الموقع. رح نعرض بس المكان على الخريطة."
+          );
           map.setView(place.coords, 10);
           return;
         }
@@ -245,7 +785,9 @@
           },
           function (error) {
             console.error(error);
-            speak("ما قدرنا نحدد موقعك الحالي. رح نعرض المكان بس على الخريطة.");
+            speak(
+              "ما قدرنا نحدد موقعك الحالي. رح نعرض المكان بس على الخريطة."
+            );
             map.setView(place.coords, 10);
           }
         );
@@ -328,6 +870,7 @@
         });
       }
 
+      // ===== 7) TEXT-TO-SPEECH (ARABIC) =====
       var availableVoices = [];
 
       function loadVoices() {
@@ -380,6 +923,7 @@
         window.speechSynthesis.speak(utterance);
       }
 
+      // ===== 8) SPEECH RECOGNITION (INPUT) =====
       var recognition = null;
       var voiceStatusEl = document.getElementById("voice-status");
       var lastCommandEl = document.getElementById("last-command");
@@ -396,11 +940,11 @@
         recognition.maxAlternatives = 1;
 
         recognition.onstart = function () {
-          voiceStatusEl.textContent = "🎤 عم بسمعك... احكي";
+          voiceStatusEl.textContent = "Listening...";
         };
 
         recognition.onerror = function (event) {
-          voiceStatusEl.textContent = "صار خطأ بالتعرف على الصوت.";
+          voiceStatusEl.textContent = "Voice recognition error.";
           console.error(event);
         };
 
@@ -410,18 +954,18 @@
 
         recognition.onresult = function (event) {
           var transcript = event.results[0][0].transcript.trim();
-          lastCommandEl.textContent = "سمعت: " + transcript;
+          lastCommandEl.textContent = 'Heard: "' + transcript + '"';
           handleVoiceCommand(transcript);
         };
       } else {
         voiceStatusEl.textContent =
-          "❌ متصفحك ما بدعم التعرف على الصوت (جرب Google Chrome).";
+          "Your browser does not support voice recognition (try Google Chrome).";
       }
 
       function startListening() {
         if (!recognition) {
           alert(
-            "متصفحك ما بدعم التعرف على الصوت. حاول تفتح الموقع من جوجل كروم."
+            "Your browser does not support voice recognition. Try opening the site in Google Chrome."
           );
           return;
         }
@@ -431,22 +975,30 @@
       function handleVoiceCommand(text) {
         var normalized = text.replace("ال", "").trim();
 
-        if (normalized.includes("بترا") || text.includes("البتراء")) {
+        if (normalized.includes("بترا") || text.includes("البتراء") || text.toLowerCase().includes("petra")) {
           startNavigation("petra");
-        } else if (normalized.includes("جرش")) {
+        } else if (normalized.includes("جرش") || text.toLowerCase().includes("jerash")) {
           startNavigation("jerash");
-        } else if (text.includes("البحر الميت") || normalized.includes("ميت")) {
+        } else if (
+          text.includes("البحر الميت") ||
+          normalized.includes("ميت") ||
+          text.toLowerCase().includes("dead sea")
+        ) {
           startNavigation("deadSea");
-        } else if (text.includes("العقبة") || normalized.includes("عقبة")) {
+        } else if (
+          text.includes("العقبة") ||
+          normalized.includes("عقبة") ||
+          text.toLowerCase().includes("aqaba")
+        ) {
           startNavigation("aqaba");
         } else {
           speak(
             "ما فهمت المكان اللي حكيت عنه. جرّب تقول: البتراء، جرش، البحر الميت، أو العقبة."
           );
           alert(
-            "ما قدرت أميز المكان من الجملة: " +
+            'Could not detect the place from: "' +
               text +
-              "\nجرّب تقول: البتراء، جرش، البحر الميت، أو العقبة."
+              '".\nTry saying: Petra, Jerash, Dead Sea, or Aqaba.'
           );
         }
       }
