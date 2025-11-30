@@ -22,6 +22,8 @@
   .nav-center{ display:flex; align-items:center; gap:40px; white-space:nowrap; }
   .nav-link{ color:#6f6f6f; font-size:16px; text-decoration:none; transition:0.15s; }
   .nav-link:hover{ color:#000; transform:translateY(-2px); }
+  /* Active/Current page style for nav links */
+  .nav-link[aria-current="page"]{ color:var(--text); font-weight:700; text-decoration:underline; transform:none; }
   .btn-back{ background:#000; color:#fff; padding:10px 16px; border-radius:10px; border:0; font-weight:700; cursor:pointer;}
 
   /* HERO */
@@ -178,12 +180,10 @@
     <header class="nav" aria-label="Top navigation">
       <img src="img/logo_black.png" alt="My Accessible Journey logo" class="header-logo" />
       <nav class="nav-center" aria-label="Primary">
-        <a href="#" class="nav-link">Home</a>
-        <a href="#" class="nav-link">Map</a>
-        <a href="#" class="nav-link">Travel planning</a>
-        <a href="#" class="nav-link">3d model</a>
-        <a href="#" class="nav-link">Search places</a>
-        <button class="btn-back" aria-label="Back">Back</button>
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="map.html" class="nav-link">Map</a>
+        <a href="trip.html" class="nav-link">Travel planning</a>
+        <a href="3DModel.html" class="nav-link">3d model</a>
       </nav>
     </header>
 

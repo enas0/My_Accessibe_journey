@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Experience Jordan — 360 Tours</title>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --accent: #0f1724;
+    --brand: #111827;
+    --muted: #6b7280;
+    --bg: #fafafa;
+  }
+  html,body { height:100%; }
+  body { font-family: "Tajawal", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:var(--brand); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+  .header-logo {
+  height: 80px;
+  width:150px;        /* اضبط حسب حجم لوغوك */
+  object-fit: contain;
+  display: block;
+}
+
+
+  
+  .hero-bg { background-size: cover; background-position: center; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; overflow: hidden; }
+  .search-ghost { background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border-radius: 40px; box-shadow: 0 8px 30px rgba(2,6,23,0.08); }
+  .card-hover { transform: translateY(0); transition: transform .22s ease, box-shadow .22s ease; }
+  .card-hover:hover { transform: translateY(-8px); box-shadow: 0 18px 40px rgba(15,23,42,0.12); }
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  @media (min-width:1024px){ .hero-height { height: 420px; } }
+  @media (max-width:1023px){ .hero-height { height: 320px; } }
+
+ 
+     /* Footer */
+  footer.site-footer{
+    border-top:1px solid #eee;
+    padding:28px var(--pad);
+    background: #fff;
+  }
+
+  .footer-inner{
+    max-width:var(--max-width);
+    margin: 2px  auto;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:24px;
+    padding: 30px;
+    align-items:start;
+  }
+
+  /* Left column: brand + social */
+  .footer-brand{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+  .brand-name{
+    font-weight:600;
+  }
+  .brand-name img{
+    height:120px;
+    width:150px;
+    display:block;
+  }
+  .social{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .social a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#f2f4f6;
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+  }
+
+  /* Right: lists — use 3 columns */
+  .footer-links{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(120px,1fr));
+    gap:18px 36px;
+    align-items:start;
+  }
+  .links-column h4{
+    margin:0 0 12px 0;
+    font-size:14px;
+    font-weight:700;
+  }
+  .links-column ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .links-column a{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:14px;
+  }
+
+  /* Responsive */
+  @media (max-width:880px){
+    .footer-inner{ grid-template-columns: 1fr; }
+    .footer-links{ grid-template-columns: repeat(2, minmax(120px,1fr)); margin-top:8px; }
+  }
+
+</style>
+</head>
+<body class="antialiased">
+
+<!-- NAV -->
+<header class="fixed inset-x-0 top-0 z-40 bg-white/60 backdrop-blur-sm border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+     <img src="img/logo_black.png" alt="My Accessible Journey" class="header-logo" />
+
+
+    <nav class="hidden md:flex items-center gap-6 text-sm">
+      <a class="text-[var(--brand)] hover:text-gray-700" href="index.html">Home</a>
+      <a class="text-[var(--brand)] hover:text-gray-700" href="map.html">Map</a>
+      <a class="text-[var(--brand)] hover:text-gray-700" href="trip.html">Travel planning</a>
+      <a class="text-[var(--brand)] hover:text-gray-700" href="3DModel.html">3d model</a>
+    </nav>
+
+    <div class="ml-2 md:hidden">
+      <button aria-label="Open menu" class="p-2 nav-pill border border-gray-200">
+        <svg width="18" height="12" viewBox="0 0 20 14" fill="none"><rect width="20" height="2" rx="1" fill="#111827"/><rect y="6" width="20" height="2" rx="1" fill="#111827"/><rect y="12" width="20" height="2" rx="1" fill="#111827"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="pt-24">
+  <div class="hero-bg hero-height" style="background-image: url('img/img_jerach.png');">
+    <div class="max-w-7xl mx-auto px-6 h-full flex flex-col justify-center">
+      <div class="max-w-4xl">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg leading-tight">Experience Jordan's</h1>
+        <p class="mt-2 text-lg md:text-2xl text-white/90 drop-shadow-sm">Landmarks Like Never Before</p>
+
+        <!-- search card -->
+        <div class="mt-8">
+          <form id="heroSearch" class="search-ghost p-3 md:p-4 max-w-3xl">
+            <label for="searchHero" class="sr-only">search</label>
+            <div class="flex items-center gap-3">
+              <div class="pl-2">
+                <svg class="w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="#9CA3AF" stroke-width="1.5"/></svg>
+              </div>
+              <input id="searchHero" type="search" placeholder="search now" aria-label="Search" class="w-full bg-transparent placeholder-gray-500 text-sm md:text-base focus:outline-none px-2" />
+              <button type="submit" class="hidden">search</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main id="main" class="max-w-7xl mx-auto px-6 pb-24 mt-10">
+
+  <!-- template for sections -->
+  <template id="sectionTpl">
+    <section class="mt-12">
+      <div class="flex items-center gap-4">
+        <svg class="w-6 h-6 text-[var(--brand)]" viewBox="0 0 24 24" fill="none"><path d="M10 21l-6-6 14-12" stroke="#111827" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h2 class="text-2xl font-bold text-[var(--brand)]">360 Tours — Accessibility Friendly</h2>
+      </div>
+      <p class="mt-3 max-w-2xl text-sm text-[var(--muted)]">
+        Explore archaeological and natural sites in Jordan with audio descriptions, keyboard controls and an accessible experience.
+      </p>
+
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" role="list"></div>
+    </section>
+  </template>
+
+  <div id="sectionsContainer"></div>
+
+  <!-- about / features -->
+  <section class="mt-12 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    <div class="md:flex md:items-center md:justify-between gap-6">
+      <div>
+        <h3 class="text-xl font-bold text-[var(--brand)]">About the featured places</h3>
+        <p class="mt-2 text-sm text-[var(--muted)] max-w-2xl">These virtual tours are designed to be accessible for all users, including people with mobility, visual or hearing impairments. Each site includes a full audio description and you can explore famous sites, places to eat, and comfortable hotels.</p>
+      </div>
+
+      <div class="mt-4 md:mt-0 grid grid-cols-3 gap-3">
+        <div class="bg-gray-50 rounded-lg p-4 text-center shadow-sm">
+          <div class="text-2xl">♿</div>
+          <div class="font-semibold mt-2 text-sm">Accessibility</div>
+          <div class="text-xs text-[var(--muted)] mt-1">Designed for mobility & vision needs</div>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4 text-center shadow-sm">
+          <div class="text-2xl">🎧</div>
+          <div class="font-semibold mt-2 text-sm">Audio description</div>
+          <div class="text-xs text-[var(--muted)] mt-1">Clear narration for each tour</div>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4 text-center shadow-sm">
+          <div class="text-2xl">🌍</div>
+          <div class="font-semibold mt-2 text-sm">Immersive</div>
+          <div class="text-xs text-[var(--muted)] mt-1">High-quality 360 views</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+    <footer class="site-footer" role="contentinfo" aria-label="Footer">
+      <div class="footer-inner">
+
+        <!-- Left: brand + social icons -->
+        <div class="footer-brand" aria-hidden="false">
+          <div class="brand-name"><img src="img/logo_black.png"></div>
+
+          <!-- social icons (SVGs kept simple) -->
+          <div class="social" aria-label="Social links">
+            <a href="#" aria-label="Facebook" title="Facebook" role="link">
+              <!-- facebook glyph -->
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22 12.07C22 6.48 17.52 2 12 2S2 6.48 2 12.07c0 4.99 3.66 9.12 8.44 9.93v-7.03H7.9v-2.9h2.54V9.41c0-2.5 1.49-3.87 3.77-3.87 1.09 0 2.23.2 2.23.2v2.46h-1.25c-1.23 0-1.61.77-1.61 1.56v1.88h2.74l-.44 2.9h-2.3v7.03C18.34 21.19 22 17.06 22 12.07z" fill="#6b7280"/>
+              </svg>
+            </a>
+
+            <a href="#" aria-label="LinkedIn" title="LinkedIn" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 3H4a1 1 0 00-1 1v16a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1zM9.5 18H7.2V10.5h2.3V18zM8.35 9.4a1.3 1.3 0 110-2.6 1.3 1.3 0 010 2.6zM18 18h-2.3v-3.6c0-.86-.02-1.97-1.2-1.97-1.2 0-1.38.93-1.38 1.9V18H10.1V10.5h2.2v.99h.03c.31-.59 1.07-1.21 2.2-1.21 2.35 0 2.78 1.55 2.78 3.57V18z" fill="#6b7280"/>
+              </svg>
+            </a>
+
+            <a href="#" aria-label="YouTube" title="YouTube" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M23.5 6.2s-.2-1.6-.8-2.3c-.8-.9-1.7-.9-2.2-1-3-.2-7.5-.2-7.5-.2h-.1s-4.5 0-7.5.2c-.5.1-1.4.2-2.2 1-.6.7-.8 2.3-.8 2.3S1 8 1 9.8v2.4C1 14 1.2 15.6 1.2 15.6s.2 1.6.8 2.3c.8.9 1.8.9 2.3 1 1.7.1 7.3.2 7.3.2s4.6 0 7.5-.2c.5-.1 1.4-.2 2.2-1 .6-.7.8-2.3.8-2.3s.2-1.6.2-3.4V9.8c0-1.8-.2-3.6-.2-3.6zM9.8 15.1V8.9l5.9 3.1-5.9 3.1z" fill="#6b7280"/>
+              </svg>
+            </a>
+
+            <a href="#" aria-label="Instagram" title="Instagram" role="link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 7.4A4.6 4.6 0 1012 16.6 4.6 4.6 0 0012 7.4zm0 7.6a3 3 0 110-6 3 3 0 010 6zM17.8 6.7a1.07 1.07 0 11-2.14 0 1.07 1.07 0 012.14 0zM21 12c0 2.3-.06 3.6-.3 4.9-.25 1.4-.7 2.2-1.3 2.9-.6.7-1.5 1.2-2.9 1.5-1.2.2-2.6.3-4.5.3s-3.3-.1-4.5-.3c-1.4-.3-2.3-.8-2.9-1.5-.6-.7-1-1.5-1.3-2.9C3.1 15.6 3 14.3 3 12s.06-3.6.3-4.9c.25-1.4.7-2.2 1.3-2.9C5.3 2.9 6.3 2.4 7.7 2.1 8.9 1.9 10.3 1.8 12 1.8s3.1.1 4.3.3c1.4.3 2.3.8 2.9 1.5.6.7 1 1.5 1.3 2.9.2 1.3.3 2.6.3 4.0z" fill="#6b7280"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: three link columns -->
+        <div class="footer-links" role="navigation" aria-label="Footer links">
+          <div class="links-column">
+            <h4>Explore</h4>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Destinations</a></li>
+              <li><a href="#">Volunteers</a></li>
+            </ul>
+          </div>
+
+          <div class="links-column">
+            <h4>Community</h4>
+            <ul>
+              <li><a href="#">Share Your Experience</a></li>
+              <li><a href="#">Success Stories</a></li>
+              <li><a href="#">Feedback</a></li>
+            </ul>
+          </div>
+
+          <div class="links-column">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#">Contact Us</a></li>
+              <li><a href="#">FAQs</a></li>
+              <li><a href="#">Accessibility Help</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+<!-- Modal 360 -->
+<div id="overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60">
+  <div id="modalCard" class="max-w-5xl w-[95%] md:w-[1100px] bg-white rounded-xl overflow-hidden shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="flex items-center justify-between p-3 border-b">
+      <div>
+        <h2 id="modalTitle" class="text-lg font-bold text-gray-800"></h2>
+        <p id="modalSubtitle" class="text-sm text-[var(--muted)]"></p>
+      </div>
+      <div class="flex gap-2">
+        <button id="playStopAudio" class="px-3 py-2 rounded border text-sm" aria-pressed="false">Play description</button>
+        <button id="transcriptBtn" class="px-3 py-2 rounded border text-sm">Transcript</button>
+        <button id="fullscreenBtnModal" class="px-3 py-2 rounded border text-sm">Full screen</button>
+        <button id="closeOverlay" class="px-3 py-2 bg-red-600 text-white rounded">Close</button>
+      </div>
+    </div>
+
+    <div class="p-4">
+      <div id="iframeShell" class="w-full rounded-lg bg-gray-50 overflow-hidden" style="min-height:420px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Transcript modal -->
+<div id="transcriptModal" class="fixed inset-0 z-60 hidden items-center justify-center bg-black/50">
+  <div class="max-w-2xl w-[95%] bg-white rounded-lg p-6">
+    <h3 class="text-lg font-bold mb-2">Transcript</h3>
+    <div id="transcriptContent" class="text-sm text-[var(--muted)] leading-relaxed mb-4" style="max-height:50vh; overflow:auto;"></div>
+    <div class="text-right">
+      <button id="closeTranscript" class="px-3 py-2 rounded border text-sm">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========== Data ========== */
+
+/* Core places (row 1) */
+const places = [
+  {
+    id: "petra",
+    title: "Petra — Al Khazneh",
+    description: "A pink carved stone facade with accessible paths.",
+    thumb: "img/img0.jpg",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Al Khazneh - The Treasury, Petra" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking src="https://sketchfab.com/models/39ef0f6c82224860ad49039d2534046d/embed" style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "You are standing in front of Al Khazneh in Petra. Imagine a massive rock face rising several stories high..."
+  },
+  {
+    id: "jerash",
+    title: "Jerash — The Oval Plaza",
+    description: "A wide paved area surrounded by Roman columns.",
+    thumb: "img/img_jerach.png",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Jerash, Jordan" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="fullscreen; xr-spatial-tracking" xr-spatial-tracking src="https://sketchfab.com/models/c90ade57e8334d4e85a94a8f55c9c178/embed" style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "You are now in the Oval Plaza of Jerash, a spacious open area paved with smooth stone..."
+  },
+  {
+    id: "shobak",
+    title: "Shobak Castle - Museum",
+    description: "A Crusader castle with museum exhibits and historic architecture.",
+    thumb: "img/Shobak_Castle.jpg",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Shobak Castle" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking src="https://sketchfab.com/models/4a9a307edaad47c2959361592714c15b/embed" style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "You are standing inside Shobak Castle, a historic Crusader fortress perched on a rocky hill..."
+  }
+];
+
+/* Restaurants (row 2) — user requested: replace last-2 with restaurants + hotels */
+const restaurants = [
+  {
+    id: "rest1",
+    title: "Traditional Cuisine — Amman",
+    description: "Local dishes served in an accessible setting with ramp access.",
+    thumb: "img/restorant.jpg",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Traditional restaurant interior" frameborder="0" allowfullscreen style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "This traditional restaurant offers classic Jordanian dishes. Tables are well spaced for mobility and the floor is level near the entrance."
+  },
+  {
+    id: "rest2",
+    title: "Seafood & Views — Aqaba",
+    description: "Seafood restaurant overlooking the gulf with accessible seating.",
+    thumb: "img/views.jpg",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Seafood restaurant view" frameborder="0" allowfullscreen style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "A seaside restaurant with smooth access routes and panoramic views of the water, suitable for visitors with mobility needs."
+  },
+  {
+    id: "rest3",
+    title: "Cafe & Sweets — Downtown",
+    description: "Cozy cafe with accessible counter and accessible restroom.",
+    thumb: "img/coffee.webp",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Cafe interior" frameborder="0" allowfullscreen style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "A friendly cafe with wide aisles and a lowered counter for service. Lighting is soft and seating includes accessible options."
+  }
+];
+
+/* Hotels (row 3) */
+const hotels = [
+  {
+    id: "hotel1",
+    title: "Luxury Hotel — Amman",
+    description: "Five-star hotel with accessible rooms and elevators.",
+    thumb: "img/439166489.jpg",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Luxury hotel lobby" frameborder="0" allowfullscreen style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "The luxury hotel offers accessible guest rooms, ramps, and dedicated elevators. Public areas are spacious and well-lit."
+  },
+  {
+    id: "hotel2",
+    title: "Seaside Resort — Aqaba",
+    description: "Resort with beach access ramps and adapted rooms.",
+    thumb: "img/R.jpg",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Resort view" frameborder="0" allowfullscreen style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "A resort with ramped paths to the beach, accessible pool entries, and rooms designed for guests with mobility requirements."
+  },
+  {
+    id: "hotel3",
+    title: "Boutique Hotel — Dead Sea",
+    description: "Quiet boutique with accessible terraces and lifts.",
+    thumb: "img/Fairmont-Amman-Exterior-Shot-Dawn-690x490.jpg",
+    embed: `<div class="sketchfab-embed-wrapper"><iframe title="Boutique hotel terrace" frameborder="0" allowfullscreen style="width:100%; height:420px;"></iframe></div>`,
+    audioText: "A small boutique hotel offering calm terraces and accessible lift access; rooms are compact but thoughtfully adapted."
+  }
+];
+
+/* ========== Render three sections, with row2 restaurants and row3 hotels ========== */
+const sectionsContainer = document.getElementById('sectionsContainer');
+const tpl = document.getElementById('sectionTpl');
+
+function renderSection(titleSuffix, items){
+  const clone = tpl.content.cloneNode(true);
+  const heading = clone.querySelector('h2');
+  heading.textContent = `360 Tours — ${titleSuffix}`;
+  const paragraph = clone.querySelector('p');
+  paragraph.textContent = "Explore archaeological and natural sites in Jordan with audio descriptions, keyboard controls and an accessible experience.";
+
+  const list = clone.querySelector('[role="list"]');
+  items.forEach(p => {
+    const art = document.createElement('article');
+    art.className = "bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer";
+    art.tabIndex = 0;
+    art.innerHTML = `
+      <div class="relative">
+        <img src="${p.thumb}" class="w-full h-44 object-cover rounded-t-xl" alt="${p.title}" />
+      </div>
+      <div class="p-4">
+        <h3 class="text-sm font-bold text-gray-800">${p.title}</h3>
+        <p class="mt-2 text-xs text-[var(--muted)]">${p.description}</p>
+      </div>
+    `;
+    art.onclick = ()=> openPlace(p);
+    art.onkeydown = (e) => { if(e.key === 'Enter') openPlace(p); };
+    list.appendChild(art);
+  });
+
+  sectionsContainer.appendChild(clone);
+}
+
+/* Row 1: original places */
+renderSection("Accessibility Friendly", places);
+
+/* Row 2: restaurants (as requested) */
+renderSection("Accessibility Friendly — Places to eat", restaurants);
+
+/* Row 3: hotels (as requested) */
+renderSection("Accessibility Friendly — Hotels & stays", hotels);
+
+/* ========== Search (hero) ========== */
+const heroSearch = document.getElementById('heroSearch');
+const searchInput = document.getElementById('searchHero');
+heroSearch.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const q = searchInput.value.trim().toLowerCase();
+  if(!q){
+    document.querySelector('main').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  const first = Array.from(document.querySelectorAll('article')).find(a => a.textContent.toLowerCase().includes(q));
+  if(first){
+    first.scrollIntoView({behavior:'smooth', block:'center'});
+    first.focus();
+  } else {
+    alert('No results found — try Petra, Jerash, Shobak, or search restaurants/hotels');
+  }
+});
+
+/* ========== Modal / audio / transcript ========== */
+const overlay = document.getElementById("overlay");
+const modalTitle = document.getElementById("modalTitle");
+const modalSubtitle = document.getElementById("modalSubtitle");
+const shell = document.getElementById("iframeShell");
+const closeOverlay = document.getElementById("closeOverlay");
+const playStopAudio = document.getElementById("playStopAudio");
+const fullscreenBtnModal = document.getElementById("fullscreenBtnModal");
+const transcriptBtn = document.getElementById("transcriptBtn");
+const transcriptModal = document.getElementById("transcriptModal");
+const transcriptContent = document.getElementById("transcriptContent");
+const closeTranscript = document.getElementById("closeTranscript");
+
+let currentPlace = null;
+function stopTTS(){ if(window.speechSynthesis) speechSynthesis.cancel(); if(playStopAudio) playStopAudio.textContent = "Play description"; }
+function playTTS(text){ if(!window.speechSynthesis) return; const u = new SpeechSynthesisUtterance(text); u.lang = "en-US"; speechSynthesis.speak(u); playStopAudio.textContent = "Stop description"; }
+
+playStopAudio.addEventListener('click', ()=>{
+  if(!currentPlace) return;
+  if(window.speechSynthesis && speechSynthesis.speaking) stopTTS();
+  else playTTS(currentPlace.audioText);
+});
+
+transcriptBtn.addEventListener('click', ()=>{
+  if(!currentPlace) return;
+  transcriptContent.textContent = currentPlace.audioText;
+  transcriptModal.classList.remove('hidden');
+  transcriptModal.classList.add('flex');
+});
+closeTranscript.addEventListener('click', ()=>{
+  transcriptModal.classList.add('hidden');
+  transcriptModal.classList.remove('flex');
+});
+
+function openPlace(place){
+  currentPlace = place;
+  modalTitle.textContent = place.title;
+  modalSubtitle.textContent = place.description;
+  shell.innerHTML = place.embed || `<div class="p-6 text-sm text-[var(--muted)]">No 3D embed available for this item.</div>`;
+  overlay.classList.remove('hidden');
+  overlay.classList.add('flex');
+  stopTTS();
+  setTimeout(()=> document.getElementById('closeOverlay').focus(), 120);
+}
+
+closeOverlay.addEventListener('click', ()=>{
+  stopTTS();
+  exitFullScreenIfNeeded();
+  overlay.classList.add('hidden');
+  overlay.classList.remove('flex');
+  shell.innerHTML = "";
+});
+
+/* Fullscreen helpers */
+function isInFullScreen() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+}
+async function enterFullScreen(el) {
+  if (!el) return;
+  try {
+    if (el.requestFullscreen) await el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+  } catch (err) {}
+}
+function exitFullScreen() {
+  if (document.exitFullscreen) return document.exitFullscreen();
+  if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+  if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
+  if (document.msExitFullscreen) return document.msExitFullscreen();
+}
+function exitFullScreenIfNeeded(){ if (isInFullScreen()) exitFullScreen(); }
+const modalContainer = document.getElementById('modalCard');
+function updateFullscreenButton() { fullscreenBtnModal.textContent = isInFullScreen() ? "Exit full screen" : "Full screen"; }
+fullscreenBtnModal.addEventListener('click', async ()=>{
+  if (!modalContainer) return;
+  if (!isInFullScreen()) await enterFullScreen(modalContainer);
+  else await exitFullScreen();
+  updateFullscreenButton();
+});
+document.addEventListener('fullscreenchange', updateFullscreenButton);
+
+/* keyboard: Escape closes modals */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape'){
+    if(!overlay.classList.contains('hidden')) closeOverlay.click();
+    if(!transcriptModal.classList.contains('hidden')) closeTranscript.click();
+  }
+});
+</script>
+</body>
+</html>
