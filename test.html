@@ -1,676 +1,377 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>خريطة الأردن — My Accessible Journey</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Traveler's Community — My Accessible Journey</title>
+<style>
+  :root{
+    --bg:#fafafa; --muted:#6b7280; --accent:#111827; --card:#ffffff; --tag-bg:#e6f0ff;
+    --container:1150px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    color:var(--accent); background:var(--bg); -webkit-font-smoothing:antialiased;
+  }
 
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
-  />
+  /* Topbar */
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:20px 48px}
+  .brand{font-weight:700}
+  .nav{display:flex;gap:18px;align-items:center}
+  .nav a{color:var(--muted);text-decoration:none;font-size:14px}
+  .back{background:#000;color:#fff;border:none;padding:8px 12px;border-radius:8px}
 
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
-  />
+  /* Layout */
+  .container{max-width:var(--container);margin:0 auto;padding:24px}
+  .hero{display:flex;gap:24px;align-items:center;margin-top:12px}
+  .hero-left{flex:1}
+  .hero-right{width:420px}
+  h1{font-size:48px;margin:0 0 12px}
+  .subtitle{color:var(--muted);margin-bottom:18px}
+  .create-btn{background:#111827;color:#fff;padding:14px 22px;border-radius:8px;border:none;cursor:pointer}
 
-  <style>
-    :root{
-      --accent:#6b93c6;
-      --muted:#8b8b8b;
-      --bg:#fbfbfc;
-      --card-bg:#ffffff;
-      --radius:14px;
-    }
+  .hero-image{width:100%;height:260px;object-fit:cover;border-radius:14px}
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background:var(--bg);
-      color:#111;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+  .section-title{font-size:28px;margin:36px 0}
 
-    /* Page header */
-    header.site-head{
-      max-width:1200px;
-      margin:28px auto 10px;
-      padding:0 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .brand .logo{
-      width:44px; height:44px;
-      border-radius:8px;
-      background:linear-gradient(135deg,#f4f6f9,#e6eefc);
-      display:flex; align-items:center; justify-content:center;
-      box-shadow:0 2px 6px rgba(0,0,0,.06);
-      font-weight:700;
-    }
-    nav.top-nav{display:flex; gap:18px; align-items:center;}
-    nav.top-nav a{color:#222; text-decoration:none; font-size:14px; opacity:.9}
-    nav.top-nav a:hover{opacity:1}
+  /* Grid of cards */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--card);border-radius:12px;box-shadow:0 6px 12px rgba(15,23,42,0.06);overflow:hidden;display:flex;flex-direction:column}
+  .card-image{width:100%;height:140px;object-fit:cover}
+  .card-body{padding:16px;flex:1;display:flex;flex-direction:column}
+  .card h3{margin:0 0 6px}
+  .muted{color:var(--muted)}
+  .meta{list-style:none;padding:0;margin:8px 0 12px;color:var(--muted);font-size:14px}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .tag{background:var(--tag-bg);padding:6px 10px;border-radius:999px;font-size:13px}
+  .card-actions{display:flex;justify-content:flex-start;margin-top:auto}
+  .join-btn{background:#111827;color:#fff;padding:10px 16px;border-radius:8px;border:none;cursor:pointer}
 
-    /* Hero title */
-    .hero{
-      max-width:1200px;
-      margin:10px auto 26px;
-      padding:0 20px;
-      text-align:center;
-    }
-    .hero h1{
-      margin:0;
-      font-size:48px;
-      letter-spacing:-1px;
-    }
-    .hero p{
-      margin:12px 0 0;
-      color:var(--muted);
-      font-size:18px;
-    }
+  footer.footer{padding:36px;text-align:center;color:var(--muted);margin-top:36px;border-top:1px solid #eee}
 
-    /* Main area layout */
-    .main {
-      max-width:1200px;
-      margin:26px auto 60px;
-      padding:0 20px;
-      display:grid;
-      grid-template-columns: 1fr 360px;
-      gap:24px;
-      align-items:start;
-    }
+  /* Modal */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(16,24,40,0.6);display:none;align-items:center;justify-content:center;z-index:60;
+  }
+  .modal-overlay.open{display:flex}
+  .modal{
+    background:var(--card);width:920px;max-width:95%;max-height:90vh;overflow:auto;border-radius:12px;box-shadow:0 20px 50px rgba(2,6,23,0.6);padding:18px;
+  }
+  .modal-header{display:flex;align-items:center;justify-content:space-between}
+  .icon-btn{background:transparent;border:none;font-size:18px;cursor:pointer}
+  .modal-content{display:flex;gap:18px;margin-top:12px}
+  .modal-image{width:44%;height:240px;object-fit:cover;border-radius:8px}
+  .modal-details{flex:1}
+  .modal-details h4{margin:12px 0 6px}
+  .modal-actions{display:flex;gap:12px;margin-top:18px}
+  .confirm-btn{background:#111827;color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
+  .cancel-btn{background:#efefef;border-radius:8px;padding:10px 14px;border:none;cursor:pointer}
 
-    /* Map card */
-    .map-card{
-      background:var(--card-bg);
-      border-radius:var(--radius);
-      padding:18px;
-      box-shadow:0 6px 18px rgba(11,18,30,0.06);
-      min-height:420px;
-    }
-    #map{
-      width:100%;
-      height:420px;
-      border-radius:10px;
-      overflow:hidden;
-      box-shadow:inset 0 0 0 1px rgba(0,0,0,0.02);
-    }
-
-    /* Right panel (place card) */
-    .place-panel{
-      background:var(--card-bg);
-      border-radius:var(--radius);
-      padding:0;
-      overflow:hidden;
-      box-shadow:0 6px 18px rgba(11,18,30,0.06);
-      display:flex;
-      flex-direction:column;
-      min-height:420px;
-      transition:transform .28s ease, opacity .28s ease;
-      position:relative;
-    }
-
-    .place-image{
-      height:170px;
-      width:100%;
-      object-fit:cover;
-      display:block;
-    }
-
-    .place-body{
-      padding:16px 18px 22px;
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-
-    .place-title{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-    }
-    .place-title h3{
-      margin:0;
-      font-size:18px;
-    }
-    .place-title .close-btn{
-      background:#111;
-      color:#fff;
-      border-radius:10px;
-      padding:6px 10px;
-      font-size:13px;
-      border:none;
-      cursor:pointer;
-      opacity:.85;
-    }
-    .place-title .close-btn:hover{opacity:1}
-
-    .place-sub{
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .place-desc{
-      color:#333;
-      font-size:14px;
-      line-height:1.45;
-      flex:1;
-      margin-top:6px;
-    }
-
-    .badges{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .badge{
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(107,147,198,0.12);
-      color:var(--accent);
-      font-size:13px;
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-    }
-
-    .place-actions{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:flex-end;
-      margin-top:6px;
-    }
-    .primary-btn{
-      padding:10px 14px;
-      border-radius:10px;
-      border:none;
-      background:var(--accent);
-      color:#fff;
-      font-weight:600;
-      cursor:pointer;
-    }
-    .link-btn{
-      background:transparent;
-      border:1px solid #e6e6e6;
-      padding:8px 12px;
-      border-radius:10px;
-      cursor:pointer;
-    }
-
-    /* Quick picks row */
-    .quick-row{
-      margin-top:20px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .chips{
-      display:flex;
-      gap:12px; flex-wrap:wrap;
-    }
-    .chip{
-      background:#111;
-      color:#fff;
-      padding:12px 18px;
-      border-radius:10px;
-      cursor:pointer;
-      font-size:14px;
-      opacity:.95;
-    }
-    .voice-widget{
-      min-width:220px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:flex-end;
-    }
-    .voice-pill{
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,0.08);
-      padding:8px 16px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      background:#fff;
-    }
-    .voice-dot{
-      width:48px; height:48px; border-radius:50%;
-      background:rgba(107,147,198,0.3);
-      display:flex; align-items:center; justify-content:center;
-      font-weight:700;
-    }
-
-    /* Footer */
-    footer.site-foot{
-      max-width:1200px;
-      margin:40px auto 80px;
-      padding:0 20px;
-      color:var(--muted);
-      font-size:13px;
-      border-top:1px solid rgba(0,0,0,0.04);
-      padding-top:26px;
-    }
-
-    /* Hidden state for panel */
-    .hidden-panel{
-      transform:translateX(16px) scale(.995);
-      opacity:0;
-      pointer-events:none;
-    }
-
-    /* Responsive */
-    @media (max-width:980px){
-      .main{grid-template-columns:1fr; padding:0 12px}
-      .place-panel{order:2; margin-top:18px}
-      .hero h1{font-size:34px}
-      #map{height:360px}
-    }
-  </style>
+  /* small screens */
+  @media (max-width:900px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .hero{flex-direction:column}
+    .hero-right{width:100%}
+    .modal-content{flex-direction:column}
+    .modal-image{width:100%;height:220px}
+  }
+  @media (max-width:600px){
+    .grid{grid-template-columns:1fr}
+    h1{font-size:34px}
+  }
+</style>
 </head>
 <body>
 
-  <header class="site-head" role="banner">
-    <div class="brand" aria-hidden="false">
-      <div class="logo">MJ</div>
-      <div>
-        <div style="font-weight:700">My Accessible Journey</div>
-        <div style="font-size:12px; color:var(--muted)">Travel with accessibility in mind</div>
-      </div>
-    </div>
-
-    <nav class="top-nav" aria-label="القائمة الرئيسية">
+  <header class="topbar" aria-hidden="false">
+    <div class="brand">My Accessible Journey</div>
+    <nav class="nav" aria-label="Main navigation">
       <a href="#">Home</a>
       <a href="#">Map</a>
-      <a href="#">Travel planing</a>
+      <a href="#">Travel planning</a>
       <a href="#">3d model</a>
-      <button style="background:#000;color:#fff;padding:8px 14px;border-radius:8px;border:none;cursor:pointer">back</button>
+      <button class="back">back</button>
     </nav>
   </header>
 
-  <section class="hero" role="region" aria-label="مقدمة الخريطة">
-    <h1>Smart Map for Easier Travel</h1>
-    <p>Use the interactive map to discover places and follow clear routes made for everyone.</p>
-  </section>
-
-  <main class="main">
-    <!-- LEFT: Map -->
-    <div class="map-card" aria-hidden="false">
-      <div id="map" role="application" aria-label="خريطة تفاعلية"></div>
-
-      <div class="quick-row" style="margin-top:14px">
-        <div class="chips" aria-hidden="false">
-          <div class="chip" onclick="startNavigation('petra')">البتراء</div>
-          <div class="chip" onclick="startNavigation('deadSea')">البحر الميت</div>
-          <div class="chip" onclick="startNavigation('jerash')">جرش</div>
-          <div class="chip" onclick="startNavigation('aqaba')">العقبة</div>
-        </div>
-
-        <div class="voice-widget" aria-hidden="false">
-          <div style="text-align:left">
-            <div style="font-size:13px;color:var(--muted)">Try speack</div>
-          </div>
-          <div class="voice-pill" role="button" tabindex="0" onclick="startListening()" aria-label="اضغط للتحدث">
-            <div style="font-weight:700; font-size:16px">🎤</div>
-            <div style="min-width:120px; color:var(--muted)">اضغط وتكلّم</div>
-            <div class="voice-dot" aria-hidden="true">●</div>
-          </div>
-        </div>
+  <main class="container" id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-left">
+        <h1 id="hero-title">Traveler's Community</h1>
+        <p class="subtitle">Join group trips or create your own adventure</p>
+        <button class="create-btn" type="button">+ Create Trip</button>
       </div>
-    </div>
-
-    <!-- RIGHT: Place panel -->
-    <aside id="placePanel" class="place-panel hidden-panel" aria-hidden="true" aria-live="polite">
-      <img id="placeImg" class="place-image" src="/mnt/data/map.png" alt="صورة المكان" />
-      <div class="place-body">
-        <div class="place-title">
-          <div>
-            <h3 id="placeName">Dead Sea Resorts</h3>
-            <div class="place-sub" id="placeLocation">Dead Sea</div>
-          </div>
-          <div>
-            <button class="close-btn" onclick="hidePlacePanel()" aria-label="اغلاق">×</button>
-          </div>
-        </div>
-
-        <div id="placeDesc" class="place-desc">
-          Accessible spa resorts with therapeutic experiences
-        </div>
-
-        <div class="badges" id="placeBadges">
-          <span class="badge">Visual</span>
-          <span class="badge">Hearing</span>
-          <span class="badge">Physical</span>
-        </div>
-
-        <div class="place-actions">
-          <button class="link-btn" onclick="zoomToPlace()">عرض على الخريطة</button>
-          <button class="primary-btn" onclick="startNavigation(currentPlaceKey)">توجيه إلي هنا</button>
-        </div>
+      <div class="hero-right" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1508264165352-c2b5b8e08f7b?w=1200&q=80&auto=format&fit=crop" alt="Group around campfire" class="hero-image" />
       </div>
-    </aside>
+    </section>
+
+    <h2 class="section-title">Ready-to-Go Adventures</h2>
+
+    <section class="grid" id="trips-grid" aria-live="polite">
+      <!-- cards will be injected by JS -->
+    </section>
+
+    <footer class="footer" role="contentinfo">
+      © My Accessible Journey
+    </footer>
   </main>
 
-  <footer class="site-foot" role="contentinfo">
-    <div style="display:flex;justify-content:space-between;gap:20px;align-items:flex-start">
-      <div>© My Accessible Journey</div>
-      <div style="color:var(--muted)">Explore — Community — Support</div>
+  <!-- Modal (hidden until open) -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalTitle">
+    <div class="modal" id="modal" tabindex="-1">
+      <header class="modal-header">
+        <h3 id="modalTitle">Trip title</h3>
+        <button class="icon-btn" id="closeBtn" aria-label="Close dialog">✕</button>
+      </header>
+
+      <div class="modal-content">
+        <img id="modalImage" class="modal-image" src="" alt="Trip preview" />
+        <div class="modal-details">
+          <p id="modalShort" class="muted"></p>
+          <ul id="modalMeta" class="meta"></ul>
+          <p id="modalDescription"></p>
+
+          <div class="tags" id="modalTags" style="margin-top:8px"></div>
+
+          <div class="extra" id="modalExtras">
+            <h4>Itinerary</h4>
+            <ol id="modalItinerary"></ol>
+
+            <h4>What's included</h4>
+            <ul id="modalIncludes"></ul>
+          </div>
+
+          <div class="modal-actions">
+            <button class="confirm-btn" id="confirmJoin">Confirm Join</button>
+            <button class="cancel-btn" id="cancelJoin">Cancel</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </footer>
+  </div>
 
-  <!-- Leaflet + Routing -->
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+<script>
+/* Sample trips data */
+const trips = [
+  {
+    id: 't1',
+    title: 'Dead Sea Relaxation Retreat',
+    short: 'Wellness weekend with accessible spa facilities',
+    date: 'Nov 22-23, 2025',
+    location: 'Dead Sea',
+    organizer: 'Sarah M.',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80&auto=format&fit=crop',
+    accessibility: ['Visual', 'Hearing', 'Physical'],
+    description: 'Join a relaxed weekend at the Dead Sea with accessible accommodations, guided low-impact hikes, accessible spa treatments and mindful group activities.',
+    itinerary: ['Arrival & welcome', 'Accessible spa & relaxation', 'Guided low-impact hike', 'Departure'],
+    includes: ['Transport from Amman', '2 nights hotel (accessible room)', 'Spa session', 'Guided activities']
+  },
+  {
+    id: 't2',
+    title: 'Petra Cultural Weekend',
+    short: 'Explore Petra with accessibility-minded guides',
+    date: 'Dec 6-8, 2025',
+    location: 'Petra',
+    organizer: 'Omar A.',
+    image: 'https://images.unsplash.com/photo-1526481280698-8a5b9f7b6d59?w=1200&q=80&auto=format&fit=crop',
+    accessibility: ['Visual', 'Hearing'],
+    description: 'A guided experience of Petra focusing on access and sensory-friendly routes.',
+    itinerary: ['Arrival & cultural orientation', 'Guided Petra route (adapted)', 'Local cuisine tasting', 'Departure'],
+    includes: ['Meals', 'Guide', 'Transport']
+  },
+  {
+    id: 't3',
+    title: 'Ancient Theaters & Heritage',
+    short: 'Accessible visits to Roman theatres and ruins',
+    date: 'Jan 10-11, 2026',
+    location: 'Jerash',
+    organizer: 'Khaled R.',
+    image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80&auto=format&fit=crop',
+    accessibility: ['Physical', 'Visual'],
+    description: 'Discover ancient theatres with adapted routes and quiet meeting points.',
+    itinerary: ['Guided tour of theatre', 'Photography session', 'Local food tasting', 'Departure'],
+    includes: ['Transport', 'Entrance fees', 'Guide']
+  }
+];
 
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+/* Render cards */
+const grid = document.getElementById('trips-grid');
 
-  <script>
-    // Map init
-    const map = L.map('map', { zoomControl: true }).setView([31.0, 36.0], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+trips.forEach(trip => {
+  const article = document.createElement('article');
+  article.className = 'card';
+  article.innerHTML = `
+    <img class="card-image" src="${trip.image}" alt="${escapeHtml(trip.title)} image" />
+    <div class="card-body">
+      <h3>${escapeHtml(trip.title)}</h3>
+      <p class="muted">${escapeHtml(trip.short)}</p>
+      <ul class="meta">
+        <li>• ${escapeHtml(trip.date)}</li>
+        <li>• ${escapeHtml(trip.location)}</li>
+        <li>• Organized by ${escapeHtml(trip.organizer)}</li>
+      </ul>
+      <div class="tags">
+        ${trip.accessibility.map(a => `<span class="tag">${escapeHtml(a)}</span>`).join('')}
+      </div>
+      <div class="card-actions">
+        <button class="join-btn" data-trip-id="${trip.id}">Join community</button>
+      </div>
+    </div>
+  `;
+  grid.appendChild(article);
+});
 
-    // Data for places
-    const places = {
-      petra: {
-        name: "البتراء",
-        coords: [30.3285, 35.4444],
-        image: "/mnt/data/map.png",
-        locationText: "Petra",
-        desc: `مسار مقترح لذوي الإعاقة: عند الوصول اتبع الممر المعبد واطلب خريطة المسارات المناسبة من مركز الزوار.`,
-        badges: ["Visual","Physical"]
-      },
-      jerash: {
-        name: "جرش",
-        coords: [32.2808, 35.8947],
-        image: "/mnt/data/map.png",
-        locationText: "Jerash",
-        desc: `اغلب المنطقة مستوية لكن انتبه لبعض الانحدارات. استخدم المسارات المبلطة قدر الإمكان.`,
-        badges: ["Physical"]
-      },
-      deadSea: {
-        name: "البحر الميت",
-        coords: [31.559, 35.4732],
-        image: "/mnt/data/map.png",
-        locationText: "Dead Sea",
-        desc: `منتجعات مع مسارات ومنحدرات مهيأة. اسأل على طرق الوصول الآمن للشاطئ.`,
-        badges: ["Visual","Hearing","Physical"]
-      },
-      aqaba: {
-        name: "العقبة",
-        coords: [29.5329, 35.0063],
-        image: "/mnt/data/map.png",
-        locationText: "Aqaba",
-        desc: `مسارات مسطحة ومهيأة، وبعض الشواطئ تمتلك كراسي خاصة للنزول للمياه.`,
-        badges: ["Physical","Hearing"]
-      }
-    };
+/* Modal logic & accessibility: focus trap, restore focus, keyboard */
+const modalOverlay = document.getElementById('modalOverlay');
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalImage = document.getElementById('modalImage');
+const modalShort = document.getElementById('modalShort');
+const modalMeta = document.getElementById('modalMeta');
+const modalDescription = document.getElementById('modalDescription');
+const modalTags = document.getElementById('modalTags');
+const modalItinerary = document.getElementById('modalItinerary');
+const modalIncludes = document.getElementById('modalIncludes');
+const confirmJoin = document.getElementById('confirmJoin');
+const cancelJoin = document.getElementById('cancelJoin');
+const closeBtn = document.getElementById('closeBtn');
 
-    // Create markers and attach click handlers
-    const markers = {};
-    Object.keys(places).forEach(key => {
-      const p = places[key];
-      const m = L.marker(p.coords).addTo(map);
-      m.on('click', () => {
-        // open a small popup and show panel
-        m.bindPopup(`<b>${p.name}</b>`).openPopup();
-        showPlacePanel(key);
-      });
-      markers[key] = m;
-    });
+let activeTrigger = null; // element that opened modal
+let currentTrip = null;
 
-    // Routing & user marker state
-    let routingControl = null;
-    let userMarker = null;
-    let watchId = null;
+grid.addEventListener('click', (e) => {
+  const btn = e.target.closest('button.join-btn');
+  if (!btn) return;
+  const id = btn.dataset.tripId;
+  openModal(id, btn);
+});
 
-    // current place key used by actions
-    let currentPlaceKey = null;
+closeBtn.addEventListener('click', closeModal);
+cancelJoin.addEventListener('click', closeModal);
 
-    // Panel dom
-    const placePanel = document.getElementById('placePanel');
-    const placeImg = document.getElementById('placeImg');
-    const placeName = document.getElementById('placeName');
-    const placeLocation = document.getElementById('placeLocation');
-    const placeDesc = document.getElementById('placeDesc');
-    const placeBadges = document.getElementById('placeBadges');
+confirmJoin.addEventListener('click', async () => {
+  confirmJoin.disabled = true;
+  confirmJoin.textContent = 'Joining...';
+  // simulate API call
+  await new Promise(r => setTimeout(r, 900));
+  confirmJoin.textContent = 'Joined ✓';
+  setTimeout(() => {
+    closeModal();
+    // optionally show a brief toast / message here
+  }, 700);
+});
 
-    function showPlacePanel(key){
-      if(!places[key]) return;
-      currentPlaceKey = key;
-      const p = places[key];
+/* open modal and populate */
+function openModal(id, trigger) {
+  const trip = trips.find(t => t.id === id);
+  if (!trip) return;
+  currentTrip = trip;
+  activeTrigger = trigger;
 
-      // Fill content
-      placeImg.src = p.image || "/mnt/data/map.png";
-      placeImg.alt = p.name;
-      placeName.textContent = p.name;
-      placeLocation.textContent = p.locationText || "";
-      placeDesc.innerHTML = p.desc || "";
-      // badges
-      placeBadges.innerHTML = "";
-      (p.badges || []).forEach(b => {
-        const span = document.createElement('span');
-        span.className = 'badge';
-        span.textContent = b;
-        placeBadges.appendChild(span);
-      });
+  modalTitle.textContent = trip.title;
+  modalImage.src = trip.image;
+  modalImage.alt = `${trip.title} preview`;
+  modalShort.textContent = trip.short;
 
-      // Show panel (remove hidden state)
-      placePanel.classList.remove('hidden-panel');
-      placePanel.setAttribute('aria-hidden','false');
+  modalMeta.innerHTML = `
+    <li><strong>Date:</strong> ${escapeHtml(trip.date)}</li>
+    <li><strong>Location:</strong> ${escapeHtml(trip.location)}</li>
+    <li><strong>Organizer:</strong> ${escapeHtml(trip.organizer)}</li>
+  `;
 
-      // small visual focus
-      placePanel.scrollIntoView({behavior:'smooth', block:'center'});
+  modalDescription.textContent = trip.description;
+
+  modalTags.innerHTML = trip.accessibility.map(a => `<span class="tag">${escapeHtml(a)}</span>`).join('');
+
+  modalItinerary.innerHTML = trip.itinerary.map(i => `<li>${escapeHtml(i)}</li>`).join('');
+  modalIncludes.innerHTML = trip.includes.map(i => `<li>${escapeHtml(i)}</li>`).join('');
+
+  confirmJoin.disabled = false;
+  confirmJoin.textContent = 'Confirm Join';
+
+  // show modal
+  modalOverlay.classList.add('open');
+  modalOverlay.setAttribute('aria-hidden', 'false');
+
+  // focus management
+  previouslyFocused = document.activeElement;
+  modal.focus();
+
+  // start trapping focus
+  document.addEventListener('focus', focusTrap, true);
+  document.addEventListener('keydown', onKeyDown);
+}
+
+/* close modal */
+function closeModal() {
+  modalOverlay.classList.remove('open');
+  modalOverlay.setAttribute('aria-hidden', 'true');
+  currentTrip = null;
+  document.removeEventListener('focus', focusTrap, true);
+  document.removeEventListener('keydown', onKeyDown);
+  // restore focus to the button that opened the modal
+  try { activeTrigger && activeTrigger.focus(); } catch(e){}
+}
+
+/* focus trap: keep focus inside modal */
+function focusTrap(e) {
+  if (!modalOverlay.classList.contains('open')) return;
+  if (modal.contains(e.target)) return;
+  e.stopPropagation();
+  modal.focus();
+}
+
+/* keyboard handlers */
+function onKeyDown(e) {
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    closeModal();
+    return;
+  }
+  if (e.key === 'Tab') {
+    // simple focusable elements list
+    const focusable = modal.querySelectorAll('button, a, input, textarea, [tabindex]:not([tabindex="-1"])');
+    if (focusable.length === 0) {
+      e.preventDefault();
+      modal.focus();
+      return;
     }
-
-    function hidePlacePanel(){
-      placePanel.classList.add('hidden-panel');
-      placePanel.setAttribute('aria-hidden','true');
-      currentPlaceKey = null;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
     }
+  }
+}
 
-    // When clicking quick chips or "startNavigation" we open the panel too
-    function startNavigation(key){
-      const place = places[key];
-      if(!place) return;
+/* click outside modal to close */
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) closeModal();
+});
 
-      showPlacePanel(key);
+/* Utility: escape user text for HTML insertion */
+function escapeHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, function (m) {
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+  });
+}
 
-      // if geolocation not available, just center map
-      if(!navigator.geolocation){
-        speak("جهازك لا يدعم تحديد الموقع. عرضنا المكان فقط.");
-        map.setView(place.coords, 10);
-        return;
-      }
-
-      // clear previous watch if exists
-      if(watchId !== null){
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
-      }
-
-      navigator.geolocation.getCurrentPosition(pos => {
-        const userCoords = [pos.coords.latitude, pos.coords.longitude];
-        // place or update user marker
-        if(userMarker){
-          userMarker.setLatLng(userCoords);
-        } else {
-          userMarker = L.circleMarker(userCoords, { radius:7 }).addTo(map).bindPopup("موقعك الحالي");
-        }
-        userMarker.openPopup();
-
-        // set view to include both points
-        map.fitBounds([userCoords, place.coords], { padding:[60,40] });
-
-        drawRoute(userCoords, place);
-        // watch user
-        startWatchingUserPosition(place);
-      }, err => {
-        console.error(err);
-        speak("ما قدرنا نحدد موقعك. عرضنا المكان فقط.");
-        map.setView(place.coords, 10);
-      }, { enableHighAccuracy:true, maximumAge:5000, timeout:20000 });
-    }
-
-    function zoomToPlace(){
-      if(!currentPlaceKey) return;
-      const p = places[currentPlaceKey];
-      map.setView(p.coords, 13, { animate:true });
-      // open marker popup
-      markers[currentPlaceKey].openPopup();
-    }
-
-    function startWatchingUserPosition(place){
-      if(!navigator.geolocation) return;
-      watchId = navigator.geolocation.watchPosition(pos => {
-        const newCoords = [pos.coords.latitude, pos.coords.longitude];
-        if(userMarker) userMarker.setLatLng(newCoords);
-        else {
-          userMarker = L.circleMarker(newCoords, { radius:7 }).addTo(map).bindPopup("موقعك الحالي");
-        }
-        // optionally keep user centered when navigating
-        //map.setView(newCoords, 15);
-      }, err => {
-        console.error('watch error', err);
-      }, { enableHighAccuracy:true, maximumAge:5000, timeout:20000 });
-    }
-
-    function drawRoute(userCoords, place){
-      if(routingControl){
-        map.removeControl(routingControl);
-      }
-      routingControl = L.Routing.control({
-        waypoints:[
-          L.latLng(userCoords[0], userCoords[1]),
-          L.latLng(place.coords[0], place.coords[1])
-        ],
-        routeWhileDragging:false,
-        addWaypoints:false,
-        draggableWaypoints:false,
-        show:false,
-        fitSelectedRoutes:true,
-        showAlternatives:false,
-        createMarker: function() { return null; } // hide routing markers (we use our own)
-      }).addTo(map);
-
-      routingControl.on('routesfound', e => {
-        const route = e.routes[0];
-        const distanceKm = (route.summary.totalDistance / 1000).toFixed(1);
-        const durationMin = Math.round(route.summary.totalTime / 60);
-        const voiceText = `تم بدء التوجيه إلى ${place.name}. المسافة تقريباً ${distanceKm} كيلومتر، والوقت المتوقع ${durationMin} دقيقة. اتبع المسار الظاهر على الخريطة.`;
-        speak(voiceText);
-      });
-
-      routingControl.on('routingerror', e => {
-        console.error(e);
-        speak(`تعذر حساب المسار إلى ${place.name}. حاول مرة ثانية لاحقاً.`);
-      });
-    }
-
-    // --- Speech synthesis (voice) ---
-    let availableVoices = [];
-    function loadVoices(){
-      availableVoices = window.speechSynthesis.getVoices() || [];
-    }
-    if('speechSynthesis' in window){
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-    function speak(text){
-      if(!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      let arabicVoice = (availableVoices || []).find(v => v.lang && v.lang.toLowerCase().startsWith('ar'));
-      if(arabicVoice) { u.voice = arabicVoice; u.lang = arabicVoice.lang; }
-      else u.lang = 'ar-SA';
-      u.rate = 1; u.pitch = 1;
-      window.speechSynthesis.speak(u);
-    }
-
-    // --- Speech recognition (voice commands) ---
-    let recognition = null;
-    if('SpeechRecognition' in window || 'webkitSpeechRecognition' in window){
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SR();
-      recognition.lang = 'ar-JO';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.onstart = () => {
-        // small visual feedback
-        document.querySelector('.voice-dot').textContent = '◐';
-      };
-      recognition.onend = () => {
-        document.querySelector('.voice-dot').textContent = '●';
-      };
-      recognition.onerror = (e) => {
-        console.error('recognition error', e);
-        document.querySelector('.voice-dot').textContent = '●';
-      };
-      recognition.onresult = (ev) => {
-        const transcript = ev.results[0][0].transcript.trim();
-        handleVoiceCommand(transcript);
-      };
-    } else {
-      // not supported
-      // optional: show a small toast (kept simple)
-      // console.info('Speech recognition not supported in this browser.');
-    }
-
-    function startListening(){
-      if(!recognition){
-        alert('متصفحك لا يدعم التعرف على الصوت. جرب Google Chrome.');
-        return;
-      }
-      recognition.start();
-    }
-
-    function handleVoiceCommand(text){
-      const normalized = text.replace(/ال/g,'').trim();
-      const t = text.toLowerCase();
-      if(t.includes('بترا') || normalized.includes('بترا') || t.includes('البتراء')){
-        startNavigation('petra');
-      } else if(t.includes('جرش')){
-        startNavigation('jerash');
-      } else if(t.includes('البحر الميت') || t.includes('ميت')){
-        startNavigation('deadSea');
-      } else if(t.includes('العقبة') || t.includes('عقبه') || t.includes('عقبة')){
-        startNavigation('aqaba');
-      } else {
-        speak('ما فهمت المكان. جرّب تقول: البتراء، جرش، البحر الميت، أو العقبة.');
-        alert('ما قدرت أميز المكان من الجملة: ' + text + '\nجرّب: البتراء، جرش، البحر الميت، العقبة.');
-      }
-    }
-
-    // expose a little for debug in console
-    window.startNavigation = startNavigation;
-    window.startListening = startListening;
-    window.hidePlacePanel = hidePlacePanel;
-    window.zoomToPlace = zoomToPlace;
-
-    // initial accessibility: hide panel until a marker clicked
-    hidePlacePanel();
-  </script>
+/* small enhancement: keyboard open via Enter on card buttons */
+grid.addEventListener('keydown', (e) => {
+  const btn = e.target.closest('button.join-btn');
+  if (btn && (e.key === 'Enter' || e.key === ' ')) {
+    e.preventDefault();
+    btn.click();
+  }
+});
+</script>
 </body>
 </html>
