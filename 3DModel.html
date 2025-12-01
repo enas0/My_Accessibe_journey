@@ -1,3 +1,6 @@
+حاضر — هذي الصفحة كاملة، بنفس ترتيب وشكل كودك الأصلي، مع إضافة أوصاف صوتية قصيرة (~20–25 ثانية) للـ **Petra, Jerash, Shobak** داخل مصفوفة `places`. انسخ الملف كاملًا واحفظه كـ `index.html` أو استبدل الموجود.
+
+```html
 <!doctype html>
 <html lang="en" dir="ltr">
 <head>
@@ -223,7 +226,7 @@
 
         <!-- Left: brand + social icons -->
         <div class="footer-brand" aria-hidden="false">
-          <div class="brand-name"><img src="img/logo_black.png"></div>
+          <div class="brand-name"><img src="img/logo_black.png" alt="logo"></div>
 
           <!-- social icons (SVGs kept simple) -->
           <div class="social" aria-label="Social links">
@@ -331,7 +334,7 @@ const places = [
     description: "A pink carved stone facade with accessible paths.",
     thumb: "img/img0.jpg",
     embed: `<div class="sketchfab-embed-wrapper"><iframe title="Al Khazneh - The Treasury, Petra" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking src="https://sketchfab.com/models/39ef0f6c82224860ad49039d2534046d/embed" style="width:100%; height:420px;"></iframe></div>`,
-    audioText: "You are standing in front of Al Khazneh in Petra. Imagine a massive rock face rising several stories high..."
+    audioText: "You are now exploring Petra, an ancient city carved into rose-colored mountains. Begin in the Siq, a long narrow canyon with towering cliffs that twist gently and echo footsteps. The Siq opens into the Treasury, a monumental sandstone façade around forty meters tall, decorated with columns and carved details. Beyond the Treasury are royal tombs cut into the cliffs, a stone theater carved into a slope, a long colonnaded street, and high above, the Monastery overlooks the valley from a ridge."
   },
   {
     id: "jerash",
@@ -339,7 +342,7 @@ const places = [
     description: "A wide paved area surrounded by Roman columns.",
     thumb: "img/img_jerach.png",
     embed: `<div class="sketchfab-embed-wrapper"><iframe title="Jerash, Jordan" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="fullscreen; xr-spatial-tracking" xr-spatial-tracking src="https://sketchfab.com/models/c90ade57e8334d4e85a94a8f55c9c178/embed" style="width:100%; height:420px;"></iframe></div>`,
-    audioText: "You are now in the Oval Plaza of Jerash, a spacious open area paved with smooth stone..."
+    audioText: "You are standing in Jerash at the Oval Plaza, a large circular paved square framed by standing Roman columns. From here the Cardo, a straight colonnaded street, runs away. Around the site are temples, arches, and two stone theaters carved into the hillside. The area feels open and rhythmic, with many preserved columns, paved walkways, and layered ruins that show the city's Roman past."
   },
   {
     id: "shobak",
@@ -347,7 +350,7 @@ const places = [
     description: "A Crusader castle with museum exhibits and historic architecture.",
     thumb: "img/Shobak_Castle.jpg",
     embed: `<div class="sketchfab-embed-wrapper"><iframe title="Shobak Castle" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking src="https://sketchfab.com/models/4a9a307edaad47c2959361592714c15b/embed" style="width:100%; height:420px;"></iframe></div>`,
-    audioText: "You are standing inside Shobak Castle, a historic Crusader fortress perched on a rocky hill..."
+    audioText: "You are at Shobak Castle, a Crusader fortress perched on a rocky ridge. The site is compact and defensive, with thick stone walls, narrow corridors, and ruined towers. Inside, vaulted rooms create echoes and changing floor levels. From the ramparts you can look across wide valleys below. The castle feels rugged, historic, and built for defense."
   }
 ];
 
@@ -418,7 +421,7 @@ function renderSection(titleSuffix, items){
   const paragraph = clone.querySelector('p');
   paragraph.textContent = "Explore archaeological and natural sites in Jordan with audio descriptions, keyboard controls and an accessible experience.";
 
-  const list = clone.querySelector('[role="list"]');
+  const list = clone.querySelector('[role=\"list\"]');
   items.forEach(p => {
     const art = document.createElement('article');
     art.className = "bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer";
@@ -561,3 +564,5 @@ document.addEventListener('keydown', (e)=>{
 </script>
 </body>
 </html>
+
+
