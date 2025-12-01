@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GOYA CHAT BOT</title>
+  <style>
+    :root{ --bg:#f7f7fb; --card:#ffffff; --accent:#0b76ef; --muted:#6b7280 }
+    body{font-family: "Segoe UI", Tahoma, Arial; background:var(--bg); margin:0; padding:24px;}
+    .container{max-width:820px; margin:24px auto;}
+    .card{background:var(--card); border-radius:12px; padding:20px; box-shadow:0 6px 18px rgba(11,118,239,0.06);}
+    header{display:flex; gap:12px; align-items:center}
+    .bot-avatar{width:64px; height:64px; border-radius:12px; background:linear-gradient(135deg,#0b76ef,#7dd3fc); display:flex; align-items:center; justify-content:center; color:white; font-weight:700}
+    h1{margin:0; font-size:18px}
+    p.lead{margin:6px 0 0; color:var(--muted)}
+
+    /* chat area */
+    .chat{margin-top:18px; border-radius:10px; padding:16px; background:linear-gradient(180deg,#fff,#fbfdff); min-height:220px}
+    .message{margin:10px 0; display:flex; gap:10px; align-items:flex-end}
+    .message.bot{justify-content:flex-start}
+    .message.user{justify-content:flex-end}
+    .bubble{max-width:78%; padding:12px 14px; border-radius:12px; line-height:1.45}
+    .bubble.bot{background:#eef6ff; color:#0b2340; border-bottom-left-radius:4px}
+    .bubble.user{background:#0b76ef; color:white; border-bottom-right-radius:4px}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button.btn{background:var(--accent); color:white; padding:10px 14px; border-radius:10px; border:0; cursor:pointer}
+    button.secondary{background:#eef2ff; color:var(--accent)}
+    a.inline-link{color:var(--accent); text-decoration:underline}
+
+    /* accessibility small */
+    .sr-only{position:absolute; left:-9999px}
+
+    /* responsive */
+    @media (max-width:520px){ .container{padding:8px} .bubble{max-width:100%} }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="card" role="region" aria-labelledby="chat-title">
+      <header>
+        <div class="bot-avatar" aria-hidden>رحّال</div>
+        <div>
+          <h1 id="chat-title">GOYA CHAT BOT</h1>
+          <p class="lead">تجربة سريعة لحجز رحلات مهيّئة لزوار من ذوي الإعاقات السمعية والنطقية.</p>
+        </div>
+      </header>
+
+      <div class="chat" id="chat" aria-live="polite"></div>
+
+      <div class="actions" id="initialActions">
+        <button class="btn" id="startBtn">جهّز لي رحلة</button>
+        <button class="secondary" id="changeNameBtn">غيّر الاسم (حالياً: محمد)</button>
+      </div>
+
+      <div class="actions" id="choiceActions" style="display:none">
+        <button class="btn" id="petraBtn">البترا</button>
+        <button class="btn" id="deadSeaBtn">البحر الميت</button>
+      </div>
+
+      <div style="margin-top:12px; font-size:13px; color:var(--muted)">
+        روابط الصفحات التجريبية: <a class="inline-link" href="petra_trip.html">تفاصيل البترا</a> — <a class="inline-link" href="deadesa.html">تفاصيل البحر الميت</a>
+        <div class="actions" id="voiceActions" style="margin-top:10px; display:flex; gap:10px;">
+        <button class="btn" id="voiceInputBtn">🎤 تحويل الصوت لنص</button>
+        <button class="secondary" id="voiceOutputBtn">🔊 تفعيل قراءة الرد</button>
+      </div>
+    </div>
+    </section>
+  </main>
+
+  <script>
+    // Default user name (per your request the greeting addresses "محمد")
+    let userName = 'محمد';
+
+    // DOM
+    const chat = document.getElementById('chat');
+    const startBtn = document.getElementById('startBtn');
+    const changeNameBtn = document.getElementById('changeNameBtn');
+    const choiceActions = document.getElementById('choiceActions');
+    const initialActions = document.getElementById('initialActions');
+    const petraBtn = document.getElementById('petraBtn');
+    const deadSeaBtn = document.getElementById('deadSeaBtn');
+
+    function appendMessage(text, who='bot'){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message ' + (who==='bot' ? 'bot' : 'user');
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + (who==='bot' ? 'bot' : 'user');
+      bubble.innerHTML = text;
+      wrapper.appendChild(bubble);
+      chat.appendChild(wrapper);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // small typing simulation
+    async function botSay(fullText, options = {}){
+      const {speed = 20, delay = 300} = options;
+      // show a temporary typing bubble
+      const typingBubble = document.createElement('div');
+      typingBubble.className = 'message bot';
+      typingBubble.innerHTML = '<div class="bubble bot">...</div>';
+      chat.appendChild(typingBubble);
+      chat.scrollTop = chat.scrollHeight;
+      await new Promise(r => setTimeout(r, delay));
+
+      // replace with final message
+      chat.removeChild(typingBubble);
+      appendMessage(fullText, 'bot');
+    }
+
+    // Initial greeting function — called when user opens conversation / clicks start
+    function greetInitial(){
+      const text = `مرحباً ${userName}، يسعدني اليوم أجهّز لك خُطّة رحلة ممتعة ومناسبة إلك. جاهز نبدأ؟`;
+      botSay(text).then(()=>{
+        // show the main action (already visible) — nothing else to do
+      });
+    }
+
+    // When user clicks "جهّز لي رحلة"
+    startBtn.addEventListener('click', ()=>{
+      appendMessage('جهّز لي رحلة', 'user');
+      botSay(`أهلاً ${userName}، يسعدنا وجودك معنا في مجتمع الرحّالة الخاص بنا 🌟<br>حضّرنا لك خيارين مميزين لرحلتك، وتقدر تختار اللي بناسبك:`).then(()=>{
+        initialActions.style.display = 'none';
+        choiceActions.style.display = 'flex';
+      });
+    });
+
+    // Choice handlers
+    petraBtn.addEventListener('click', ()=>{
+      appendMessage('البترا', 'user');
+      const petraText = `اختيار رائع يا ${userName}! البتراء من أجمل التجارب اللي ممكن يعيشها أي رحّال، ويسعدني جداً أرتّب لك رحلتك إلها 🌺
+      <br><br>رحلتك رح تكون مريحة وآمنة، وبأنشطة بصرية جميلة ومسارات مناسبة لزوارنا من ذوي الإعاقة السمعية أو النطقية، مع مرافق مدرّب للتواصل بالإشارات والكتابة.
+      <br>✨ لمحة سريعة عن رحلتك إلى البتراء
+      <ul>
+        <li>مسار مريح عبر السيق وصولاً للخزنة الوردية.</li>
+        <li>محطات استراحة مجهّزة ومظلّلة.</li>
+        <li>جولات بصرية ممتعة لمعالم تاريخية وصخرية مدهشة.</li>
+        <li>جلسات تصوير وتوثيق للرحلة.</li>
+        <li>خدمة نقل مريحة ذهاباً وإياباً.</li>
+      </ul>
+      🗺️ <strong>مخطط الرحلة</strong>
+      <br>08:00 الانطلاق من عمّان<br>10:00 الوصول لمركز الزوار<br>10:30 – 13:00 جولة السيق والخزنة<br>13:00 – 14:00 استراحة غداء<br>14:00 – 16:00 جولة على أبرز المعالم<br>16:30 العودة إلى عمّان
+      <br><br>🔗 لمزيد من التفاصيل والحجز: <a href="petra_trip.html">اضغط هنا</a>`;
+
+      botSay(petraText).then(()=>{
+        // keep choices visible in case user wants to choose again
+      });
+    });
+
+    deadSeaBtn.addEventListener('click', ()=>{
+      appendMessage('البحر الميت', 'user');
+      const deadText = `اختيار موفق يا ${userName}! البحر الميت تجربة فريدة ما بتتكرر، ومكان مثالي للاسترخاء والاستمتاع بالطبيعة الهادئة 🌊✨
+      <br><br>رحلتك رح تكون مريحة، سهلة، ومناسبة تمامًا لزوارنا من ذوي الإعاقة السمعية أو النطقية، مع مرافق مدرّب للتواصل بالإشارات والكتابة لضمان تجربة سلسة وممتعة.
+      <br>✨ لمحة سريعة عن رحلتك إلى البحر الميت
+      <ul>
+        <li>وقت استرخاء على الشاطئ مع إمكانية الطفو على المياه المالحة بطريقة آمنة.</li>
+        <li>جلسات استمتاع بالطين الطبيعي المعروف بفوائده.</li>
+        <li>مناطق جلوس مظلّلة ومهيّأة بالكامل للراحة.</li>
+        <li>أنشطة بصرية بسيطة مثل مشاهدة الغروب الساحر والتقاط الصور.</li>
+        <li>خدمة نقل مريحة ذهاباً وإياباً.</li>
+      </ul>
+      🗺️ <strong>مخطط الرحلة</strong>
+      <br>09:00 الانطلاق من عمّان<br>10:00 الوصول إلى منطقة البحر الميت<br>10:15 – 13:00 وقت حر على الشاطئ + طفو آمن في المياه<br>13:00 – 14:00 استراحة غداء<br>14:00 – 16:00 جلسة استرخاء وطين طبيعي + وقت للتصوير<br>16:30 العودة إلى عمّان
+      <br><br>🔗 لمزيد من التفاصيل والحجز: <a href="deadesa.html">اضغط هنا</a>`;
+
+      botSay(deadText).then(()=>{
+      });
+    });
+
+    // Change name (simple prompt) — accessible
+    changeNameBtn.addEventListener('click', ()=>{
+      const newName = prompt('اكتب الاسم اللي بتحب ينقال لك (مثال: محمد)', userName);
+      if(newName && newName.trim().length>0){
+        userName = newName.trim();
+        changeNameBtn.textContent = `غيّر الاسم (حالياً: ${userName})`;
+        appendMessage(userName + ' (غيّر الاسم)', 'user');
+        botSay(`تمّ تحديث الاسم إلى ${userName}. جاهز تبلّش؟`);
+      }
+    });
+
+    // Text‑to‑Speech
+    function speakText(text){
+      const utter = new SpeechSynthesisUtterance(text.replace(/<br>|<[^>]+>/g, ' '));
+      utter.lang = 'ar';
+      speechSynthesis.speak(utter);
+    }
+
+    // Speech‑to‑Text
+    let recognition;
+    if('webkitSpeechRecognition' in window){
+      recognition = new webkitSpeechRecognition();
+      recognition.lang = 'ar';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+    }
+
+    document.getElementById('voiceInputBtn').addEventListener('click', ()=>{
+      if(!recognition){ alert('المتصفح لا يدعم تحويل الصوت لنص'); return; }
+      recognition.start();
+      appendMessage('🎤 ... جاري الاستماع', 'bot');
+    });
+
+    recognition && recognition.addEventListener('result', (e)=>{
+      const text = e.results[0][0].transcript;
+      appendMessage(text, 'user');
+    });
+
+    document.getElementById('voiceOutputBtn').addEventListener('click', ()=>{
+      const lastBot = [...document.querySelectorAll('.message.bot .bubble')].pop();
+      if(lastBot) speakText(lastBot.innerText);
+    });
+
+    // initial auto-greeting on page load
+    window.addEventListener('load', ()=>{
+      greetInitial();
+    });
+
+  </script>
+</body>
+</html>
