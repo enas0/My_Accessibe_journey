@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Accessible Journey</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background-color: #ffffff;
+    }
+
+    .head {
+        background-image: url("img/dead_sea.webp");
+        background-size: cover;
+        background-position: center;
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 25px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 30px;
+        align-items: center;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        font-size: 16px;
+        color: white;
+        transition: 0.3s ease;
+    }
+
+    .logout-btn {
+        padding: 8px 18px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255,255,255,0.4);
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    /* ===== HERO SECTION ===== */
+    header {
+        height: 100vh;
+        width: 100%;
+        position: relative;
+    }
+
+    header::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("img/dead_sea.webp");
+        background-size: cover;
+        background-position: center;
+        filter: brightness(60%);
+    }
+
+    .hero {
+        position: relative;
+        color: white;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        z-index: 5;
+    }
+
+    header {
+        border-bottom-left-radius: 40px;
+        border-bottom-right-radius: 40px;
+        overflow: hidden;
+    }
+
+    /* ========= FULLSCREEN SECTIONS ========= */
+    .section {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        gap: 50px;
+    }
+
+    .section .text {
+        flex: 1;
+    }
+
+    .section .text h2 {
+        font-size: 40px;
+        margin-bottom: 20px;
+        color: #222;
+    }
+
+    .section .text p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .section img {
+        width: 45%;
+        border-radius: 20px;
+        object-fit: cover;
+    }
+
+    /* ===== EVENTS CARD SECTION ===== */
+    .events-card {
+        background: #f8f8f8;
+        border-radius: 25px;
+        padding: 40px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        width: 70%;
+        text-align: center;
+    }
+
+    .events-card h2 {
+        font-size: 36px;
+        margin-bottom: 20px;
+    }
+
+    .events-card .event-item {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        border: 1px solid #eaeaea;
+        text-align: left;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+        .section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .section img {
+            width: 90%;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="head">
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">
+        <img src="img/logo.png" width="40" alt="logo">
+    </div>
+
+    <div class="nav-links">
+        <a href="#">home</a>
+        <a href="#">plan trip</a>
+        <a href="#">Map</a>
+        <a href="#">travel</a>
+        <a href="#" class="logout-btn">Log Out</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header>
+    <div class="hero">
+        <h1>My Accessible Journey</h1>
+        <p>Every journey has a story. Start yours today.</p>
+    </div>
+</header>
+</div>
+
+
+<!-- ========= SECTION 1: EVENTS ========= -->
+<section class="section" style="background:#fafafa;">
+    <div class="events-card">
+        <h2>Upcoming Events</h2>
+
+        <div class="event-item">
+            <h3>Accessible Hiking Day</h3>
+            <p>Date: 12 Jan 2025</p>
+        </div>
+
+        <div class="event-item">
+            <h3>Petra Guided Tour</h3>
+            <p>Date: 5 Feb 2025</p>
+        </div>
+
+        <div class="event-item">
+            <h3>Dead Sea Wellness Trip</h3>
+            <p>Date: 20 Feb 2025</p>
+        </div>
+    </div>
+</section>
+
+
+<!-- ========= SECTION 2 ========= -->
+<section class="section">
+    <div class="text">
+        <h2>Personalized Travel Experience</h2>
+        <p>Our platform helps you discover accessible destinations tailored to your needs. Plan your journey easily with tools built for everyone.</p>
+    </div>
+    <img src="img/travel1.webp" alt="travel">
+</section>
+
+
+<!-- ========= SECTION 3 ========= -->
+<section class="section" style="background:#f6f6f6;">
+    <img src="img/map.jpg" alt="map">
+    <div class="text">
+        <h2>Your Path, Clearly Marked</h2>
+        <p>Navigate with confidence using our accessibility-focused maps designed to guide you safely through every trip.</p>
+    </div>
+</section>
+
+</body>
+</html>
