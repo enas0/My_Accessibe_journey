@@ -765,5 +765,229 @@ body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Cairo', A
 
       </div>
     </footer>
+    <body>
+  
+
+  <!-- الشات بوت -->
+  <div id="chatbot-icon">💬</div>
+  <div id="chatbot-box">
+    <div id="chat-header">
+      CHAT BOT
+      <span id="chat-close">✖</span>
+    </div>
+    <div id="chat-content"></div>
+  </div>
+
+  <style>
+    /* CSS الشات بوت */
+    #chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    #chatbot-box {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    #chat-header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chat-close {
+      cursor: pointer;
+    }
+
+    #chat-content {
+      padding: 10px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .chat-message {
+      margin: 5px 0;
+    }
+
+    .chat-message.bot {
+      color: white;
+      background-color: #4CAF50;
+      padding: 5px 10px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .chat-message.user {
+      color: black;
+      background-color: #eee;
+      padding: 5px 10px;
+      border-radius: 10px;
+      display: inline-block;
+      align-self: flex-end;
+    }
+
+    .chat-options {
+      margin: 5px 0;
+    }
+
+    .chat-options button {
+      margin: 3px;
+      padding: 5px 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .chat-options button:hover {
+      background-color: #45a049;
+    }
+  </style>
+
+  <script>
+    // JS الشات بوت
+    const chatbotIcon = document.getElementById('chatbot-icon');
+    const chatbotBox = document.getElementById('chatbot-box');
+    const chatContent = document.getElementById('chat-content');
+    const chatClose = document.getElementById('chat-close');
+
+    let userData = { disability: null, governorate: null };
+    let currentStep = 0;
+
+    const steps = [
+      { botMessage: "نهارك سعيد! شو نوع الإعاقة اللي بتعاني منها؟",
+        options: [
+          { text: "سمعية", value: "سمعية" },
+          { text: "بصرية", value: "بصرية" },
+          { text: "حركية", value: "حركية" }
+        ],
+        action: (value) => { userData.disability = value; }
+      },
+      { botMessage: "شو المحافظة اللي بتحب تزورها؟",
+        options: [
+          { text: "الكرك", value: "الكرك" },
+          { text: "العقبة", value: "العقبة" },
+          { text: "البترا", value: "البترا" },
+          { text: "عجلون", value: "عجلون" },
+             { text: "جرش", value: "جرش" },
+             { text: "اربد", value: "اربد" },
+             { text: "مادبا", value: "مادبا" },
+             { text: "السلط", value: "السلط" },
+             { text: "الزرقاء", value: "الزرقاء" },
+            { text: "عمان", value: "عمان" },
+            { text: "معان", value: "معان" },
+             { text: "البحر الميت", value: "البحر الميت" },
+             { text: "الطفيلة", value: "الطفيلة" }
+
+        ],
+        action: (value) => { userData.governorate = value; }
+      },
+      { botMessage: (data) => {
+          let msg = "";
+          if(data.governorate === "الكرك" && data.disability === "سمعية") {
+            msg += 
+                " 
+        متحف الكرك الأثري:تعال واكتشف كنوز الماضي، وكل قطعة تحكي لك سر من أسرار الحضارات \n
+               غابة اليوبيل:استنشق الهواء النقي وتمتع بألوان الطبيعة، مكان يملأ قلبك بالهدوء والسعادة \n        
+         منتزه عين سارة:خذ استراحة من الحياة اليومية، هنا المياه والجو الطبيعي يصنعان لحظات ساحرة \n    
+             قلعة الكرك:اطلع فوق التلة وشوف التاريخ بين يديك، وكل زاوية تحكي قصة من الماضي  ";
+          }
+          msg += "هل تحب تشوف رحلات جاهزة؟";
+          return msg;
+        },
+        options: [
+          { text: "نعم", value: "yes" },
+          { text: "لا", value: "no" }
+        ],
+        action: (value) => { if(value === "no") currentStep = steps.length; }
+      },
+      { botMessage: "رحلات جاهزة مقترحة: ",
+        options: [
+          { text: "البحر الميت", value: "deadsea", link: "https://omarstr.github.io/My_Accessible_journey/deadesa.html" },
+          { text: "البترا", value: "petra", link: "https://omarstr.github.io/My_Accessible_journey/petra_trip.html" },
+          { text: "رجوع للقائمة الرئيسية", value: "main" }
+        ],
+        action: (value) => { if(value === "main") currentStep = 0; }
+      }
+    ];
+
+    function addMessage(text, sender='bot') {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('chat-message', sender);
+      msgDiv.innerHTML = text;
+      chatContent.appendChild(msgDiv);
+      chatContent.scrollTop = chatContent.scrollHeight;
+    }
+
+    function showOptions(options) {
+      const optionsDiv = document.createElement('div');
+      optionsDiv.classList.add('chat-options');
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt.text;
+        btn.onclick = () => {
+          if(opt.link) window.open(opt.link, "_blank");
+          addMessage(opt.text, 'user');
+          if(opt.value) steps[currentStep].action(opt.value);
+          currentStep++;
+          chatContent.removeChild(optionsDiv);
+          if(currentStep < steps.length) nextStep();
+        }
+        optionsDiv.appendChild(btn);
+      });
+      chatContent.appendChild(optionsDiv);
+      chatContent.scrollTop = chatContent.scrollHeight;
+    }
+
+    function nextStep() {
+      const step = steps[currentStep];
+      const botText = typeof step.botMessage === 'function' ? step.botMessage(userData) : step.botMessage;
+      addMessage(botText, 'bot');
+      showOptions(step.options);
+    }
+
+    chatbotIcon.addEventListener('click', () => {
+      chatbotBox.style.display = 'flex';
+      if(chatContent.innerHTML.trim() === "") {
+        currentStep = 0;
+        nextStep();
+      }
+    });
+
+    chatClose.addEventListener('click', () => {
+      chatbotBox.style.display = 'none';
+    });
+  </script>
+</body>
+
 </body>
 </html>
