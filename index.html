@@ -795,6 +795,87 @@ body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Cairo', A
   </script>
 </body>
 
+
+
+
+    <!-- أيقونة الميكروفون لتحويل الكلام لنص -->
+<div id="mic-icon">🎤</div>
+<div id="speech-output">النص المحول يظهر هنا...</div>
+
+<style>
+  #mic-icon {
+    position: fixed;
+    bottom: 90px; /* فوق أيقونة الشات */
+    right: 20px;
+    background-color: #f44336;
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 1000;
+  }
+
+  #speech-output {
+    position: fixed;
+    bottom: 160px;
+    right: 20px;
+    width: 300px;
+    min-height: 60px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 16px;
+    color: #111;
+    overflow-y: auto;
+    z-index: 999;
+  }
+</style>
+
+<script>
+  const micIcon = document.getElementById('mic-icon');
+  const speechOutput = document.getElementById('speech-output');
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.lang = 'ar-JO';
+
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('');
+      speechOutput.textContent = transcript;
+    };
+
+    recognition.onerror = (e) => {
+      console.error("خطأ بالتحويل:", e);
+    };
+
+    let listening = false;
+
+    micIcon.addEventListener('click', () => {
+      if (!listening) {
+        recognition.start();
+        micIcon.style.backgroundColor = '#4CAF50'; // أخضر أثناء الاستماع
+        listening = true;
+      } else {
+        recognition.stop();
+        micIcon.style.backgroundColor = '#f44336'; // أحمر عند الإيقاف
+        listening = false;
+      }
+    });
+  } else {
+    alert("متصفحك لا يدعم تحويل الكلام لنص. استخدم كروم أو فايرفوكس.");
+  }
+</script>
+
 =======
 >>>>>>> Stashed changes
 =======
