@@ -120,6 +120,134 @@
     .footer-links{ grid-template-columns: repeat(2, minmax(120px,1fr)); margin-top:8px; }
   }
 
+
+
+
+
+
+
+
+
+
+
+  .sr-only{ position:absolute!important; height:1px;width:1px;overflow:hidden; clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px; }
+
+  /* ========== GOYA CHATBOT (Notion-like, white/black) ========== */
+  /* Toggle button */
+  #goya-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: #000;
+    color: #fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    cursor:pointer;
+    z-index:1200;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  #goya-icon:focus { outline:3px solid rgba(0,0,0,0.08); outline-offset:3px; }
+
+  /* Chat panel */
+  #goya-box {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 360px;
+    max-height: 76vh;
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    display: none;
+    flex-direction: column;
+    z-index:1200;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .goya-header {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    padding:12px 14px;
+    border-bottom:1px solid #f0f0f0;
+    background: linear-gradient(180deg,#fff,#fafafa);
+  }
+  .goya-avatar {
+    width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#000; color:#fff; font-weight:700;
+  }
+  .goya-title { font-weight:700; font-size:15px; }
+  .goya-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+
+  /* Chat content */
+  .goya-chat {
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    overflow-y:auto;
+    background:transparent;
+  }
+  .goya-msg { display:flex; gap:10px; }
+  .goya-msg.bot { justify-content:flex-start; }
+  .goya-msg.user { justify-content:flex-end; }
+  .goya-bubble {
+    max-width:78%;
+    padding:10px 12px;
+    border-radius:10px;
+    line-height:1.4;
+    border:1px solid #f0f0f0;
+    background:#fff;
+    color:var(--text);
+  }
+  .goya-bubble.user { background:transparent; border:1px solid #e6e6e6; }
+
+  /* Controls */
+  .goya-controls {
+    display:flex;
+    gap:8px;
+    padding:10px;
+    border-top:1px solid #f0f0f0;
+    align-items:center;
+    background: #fff;
+  }
+  .goya-btn {
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #e6e6e6;
+    background:transparent;
+    cursor:pointer;
+    font-weight:600;
+    color:#000;
+  }
+  .goya-btn.primary { background:#000; color:#fff; border:1px solid rgba(0,0,0,0.08); }
+
+  .goya-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+
+  /* make sure it looks fine on small screens */
+  @media (max-width:420px){
+    #goya-box { right: 10px; left:10px; width: auto; bottom: 80px; max-height: 70vh; border-radius:10px; }
+    #goya-icon { right: 10px; bottom: 18px; }
+  }
+
+  /* keep existing side icons but move them a bit so they don't overlap the new chat */
+  #side-icons { right: 100px; bottom: 90px; z-index:1100; }
+
+  /* small focus for accessibility */
+  button:focus, [role="button"]:focus { outline:3px solid rgba(0,0,0,0.06); outline-offset:3px; }
+
+
+
+
+
+
+
 </style>
 </head>
 <body class="antialiased">
@@ -562,6 +690,244 @@ document.addEventListener('keydown', (e)=>{
   }
 });
 </script>
+
+
+
+<!-- ===== GOYA CHATBOT (replaces old chatbot) ===== -->
+<div id="goya-icon" role="button" aria-label="فتح الدردشة" tabindex="0">💬</div>
+
+<div id="goya-box" role="dialog" aria-label="مساعد الرحّال" aria-hidden="true">
+  <div class="goya-header">
+    <div class="goya-avatar" aria-hidden>G</div>
+    <div>
+      <div class="goya-title">GOYA — مساعد الرحّال</div>
+      <div class="goya-sub">plan your trip</div>
+    </div>
+  </div>
+
+  <div class="goya-chat" id="goya-chat" aria-live="polite" aria-atomic="false"></div>
+
+  <div class="goya-controls" id="goya-controls">
+    <button class="goya-btn primary" id="goya-start" aria-label="جهّز رحلة">جهّز لي رحلة</button>
+    <button class="goya-btn" id="goya-changeName" aria-label="تغيير الاسم"> ( محمد)</button>
+    <div style="margin-inline-start:auto; display:flex; gap:8px; align-items:center;">
+      <button class="goya-btn" id="goya-voiceInput" aria-pressed="false" title="تحويل الصوت لنص">🎤</button>
+      <button class="goya-btn" id="goya-voiceOutput" aria-pressed="false" title="قراءة الرد">🔊</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== existing donut script (unchanged) ===== -->
+<script>
+  (function () {
+    const pie = document.querySelector('.pie-chart');
+    if (!pie) return;
+    const percent = Math.max(0, Math.min(100, Number(pie.getAttribute('data-percent') || 0)));
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6b3b20';
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--donut-bg').trim() || '#efecec';
+    pie.style.background = `conic-gradient(${accent} 0% ${percent}%, ${bg} ${percent}% 100%)`;
+    const center = document.getElementById('donut-value');
+    if (center) center.querySelector('.percent').textContent = percent + '%';
+  })();
+</script>
+
+<!-- ===== GOYA chatbot script (new) ===== -->
+<script>
+  (function () {
+    // Elements
+    const icon = document.getElementById('goya-icon');
+    const box = document.getElementById('goya-box');
+    const chat = document.getElementById('goya-chat');
+    const startBtn = document.getElementById('goya-start');
+    const changeNameBtn = document.getElementById('goya-changeName');
+    const voiceInputBtn = document.getElementById('goya-voiceInput');
+    const voiceOutputBtn = document.getElementById('goya-voiceOutput');
+
+    // state
+    let userName = 'محمد';
+    let recognition;
+    let lastBotText = '';
+
+    // accessibility helpers
+    function announce(text){
+      // optionally add an offscreen element or rely on aria-live on chat container
+      // chat has aria-live, so appending a bot message is sufficient
+    }
+
+    // Render message
+    function appendMessage(html, who='bot'){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'goya-msg ' + (who === 'bot' ? 'bot' : 'user');
+      const bubble = document.createElement('div');
+      bubble.className = 'goya-bubble' + (who === 'user' ? ' user' : '');
+      bubble.innerHTML = html;
+      wrapper.appendChild(bubble);
+      chat.appendChild(wrapper);
+      chat.scrollTop = chat.scrollHeight;
+      if(who === 'bot') lastBotText = bubble.innerText || bubble.textContent || '';
+    }
+
+    // small typing simulation then final
+    async function botSay(text, {delay = 300} = {}){
+      // show typing
+      const typing = document.createElement('div');
+      typing.className = 'goya-msg bot';
+      typing.innerHTML = '<div class="goya-bubble">...</div>';
+      chat.appendChild(typing);
+      chat.scrollTop = chat.scrollHeight;
+      await new Promise(r => setTimeout(r, delay));
+      typing.remove();
+      appendMessage(text, 'bot');
+      announce(text);
+    }
+
+    // initial greeting
+    function greet(){
+      const t = `مرحباً ${userName}، يسعدنا نجهّز لك خُطّة رحلة مناسبة. جاهز؟`;
+      botSay(t, {delay: 350});
+    }
+
+    // open/close handlers
+    function openBox(){
+      box.style.display = 'flex';
+      box.setAttribute('aria-hidden', 'false');
+      // if empty, greet
+      if(chat.innerHTML.trim() === '') greet();
+    }
+    function closeBox(){
+      box.style.display = 'none';
+      box.setAttribute('aria-hidden', 'true');
+    }
+
+    icon.addEventListener('click', () => {
+      if(box.style.display === 'flex') closeBox();
+      else openBox();
+    });
+    icon.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); icon.click(); } });
+
+    // Chat flows: start -> show choices -> Petra/DeadSea handlers
+    function showChoices(){
+      // show 2 buttons inside chat as quick replies
+      const controls = document.createElement('div');
+      controls.className = 'goya-actions';
+      const petra = document.createElement('button');
+      petra.className = 'goya-btn';
+      petra.type = 'button';
+      petra.textContent = 'البترا';
+      petra.onclick = () => { appendMessage('البترا', 'user'); petraHandler(); controls.remove(); };
+
+      const dead = document.createElement('button');
+      dead.className = 'goya-btn';
+      dead.type = 'button';
+      dead.textContent = 'البحر الميت';
+      dead.onclick = () => { appendMessage('البحر الميت', 'user'); deadSeaHandler(); controls.remove(); };
+
+      controls.appendChild(petra);
+      controls.appendChild(dead);
+      chat.appendChild(controls);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    startBtn.addEventListener('click', () => {
+      appendMessage('جهّز لي رحلة', 'user');
+      botSay(`أهلاً ${userName} — اختر وجهتك المفضلة أو أخبرني وجهة أخرى ترغب بها.
+1) البتراء
+2) البحر الميت`, {delay: 260}).then(()=> showChoices());
+    });
+
+    function petraHandler(){
+      const petraText = `اختيار رائع يا ${userName}! البتراء تجربة مدهشة — مسار مريح عبر السيق، محطات استراحة، ودعم تواصل بالإشارات والكتابة.
+<br><br>🗺️ <strong>مخطط مبسّط</strong><br>08:00 انطلاق — 10:00 وصول — 14:00 عودة
+<br><br><a href="petra_trip.html" target="_blank">تفاصيل الحجز</a>`;
+      botSay(petraText);
+    }
+
+    function deadSeaHandler(){
+      const deadText = `البحر الميت خيار هادئ ومريح — استرخاء، طين طبيعي، ومناطق جلوس مظللة.
+<br><br>🗺️ <strong>مخطط مبسّط</strong><br>09:00 انطلاق — 10:00 وصول — 16:30 عودة
+<br><br><a href="deadesa.html" target="_blank">تفاصيل الحجز</a>`;
+      botSay(deadText);
+    }
+
+    // change name
+    changeNameBtn.addEventListener('click', () => {
+      const newName = prompt('اكتب الاسم اللي تفضّل أن يُنادى به:', userName);
+      if(newName && newName.trim().length>0){
+        userName = newName.trim();
+        changeNameBtn.textContent = ` ( ${userName})`;
+        appendMessage(`${userName} (غيّر الاسم)`, 'user');
+        botSay(`تم تحديث الاسم إلى ${userName} — جاهز تكمل؟`);
+      }
+    });
+
+    // Text-to-Speech (reads last bot reply)
+    function speakText(text){
+      if(!('speechSynthesis' in window)) { alert('متصفحك لا يدعم قراءة النص صوتياً'); return; }
+      const clean = text.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '');
+      const u = new SpeechSynthesisUtterance(clean);
+      u.lang = 'ar-JO';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
+
+    voiceOutputBtn.addEventListener('click', () => {
+      if(!lastBotText) {
+        alert('لا يوجد رد لقراءته حالياً');
+        return;
+      }
+      speakText(lastBotText);
+    });
+
+    // Speech-to-Text (basic)
+    function initRecognition(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR) return null;
+      const r = new SR();
+      r.lang = 'ar-JO';
+      r.interimResults = false;
+      r.continuous = false;
+      return r;
+    }
+
+    voiceInputBtn.addEventListener('click', () => {
+      if(!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+        alert('المتصفح لا يدعم تحويل الصوت إلى نص');
+        return;
+      }
+      recognition = initRecognition();
+      if(!recognition) { alert('تعذر تهيئة المحرر الصوتي'); return; }
+
+      appendMessage('🎤 ... جاري الاستماع', 'bot');
+      recognition.start();
+      recognition.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        appendMessage(text, 'user');
+        // You could route the text as a user input to the bot; for now show choices if contains keywords
+        const lower = text.toLowerCase();
+        if(lower.includes('بترا') || lower.includes('البتراء')) petraHandler();
+        else if(lower.includes('بحر') || lower.includes('مميت') || lower.includes('البحر')) deadSeaHandler();
+        else botSay('شكراً! يمكنك اختيار واحدة من الأزرار أو كتابة وجهة معينة.');
+      };
+      recognition.onerror = (err) => { console.error(err); };
+      recognition.onend = () => { /* nothing */ };
+    });
+
+    // keyboard support: close on Esc
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        if(box.style.display === 'flex') closeBox();
+      }
+    });
+
+    // ensure initial aria-hidden
+    box.setAttribute('aria-hidden', 'true');
+
+    // Expose small helper for programmatic open (optional)
+    window.GOYA = { open: openBox, close: closeBox };
+
+  })();
+</script>
+
 </body>
 </html>
 

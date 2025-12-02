@@ -49,7 +49,7 @@
 
       <div class="actions" id="initialActions">
         <button class="btn" id="startBtn">جهّز لي رحلة</button>
-        <button class="secondary" id="changeNameBtn">غيّر الاسم (حالياً: محمد)</button>
+        <button class="secondary" id="changeNameBtn"> ( محمد)</button>
       </div>
 
       <div class="actions" id="choiceActions" style="display:none">
@@ -118,7 +118,14 @@
     // When user clicks "جهّز لي رحلة"
     startBtn.addEventListener('click', ()=>{
       appendMessage('جهّز لي رحلة', 'user');
-      botSay(`أهلاً ${userName}، يسعدنا وجودك معنا في مجتمع الرحّالة الخاص بنا 🌟<br>حضّرنا لك خيارين مميزين لرحلتك، وتقدر تختار اللي بناسبك:`).then(()=>{
+      botSay(`أهلاً ${userName}، يسعدنا وجودك معنا في مجتمع الرحّالة الخاص بنا 🌟<br>حضّرنا لك خيارين مميزين لرحلتك، وتقدر تختار اللي بناسبك:
+      <br>
+1️⃣ رحلة إلى البتراء
+<br>
+2️⃣ رحلة إلى البحر الميت
+<br>
+
+وبإمكانك أيضًا تخبرني إذا بتفضّل وجهة أخرى، وأنا جاهز أخططها لك بكل سرور`).then(()=>{
         initialActions.style.display = 'none';
         choiceActions.style.display = 'flex';
       });
@@ -127,7 +134,8 @@
     // Choice handlers
     petraBtn.addEventListener('click', ()=>{
       appendMessage('البترا', 'user');
-      const petraText = `اختيار رائع يا ${userName}! البتراء من أجمل التجارب اللي ممكن يعيشها أي رحّال، ويسعدني جداً أرتّب لك رحلتك إلها 🌺
+      const petraText = `اختيار رائع يا ${userName}! البتراء من أجمل التجارب اللي ممكن يعيشها أي رحّال، ويسعدني جداً أرتّب لك رحلتك إلها 
+
       <br><br>رحلتك رح تكون مريحة وآمنة، وبأنشطة بصرية جميلة ومسارات مناسبة لزوارنا من ذوي الإعاقة السمعية أو النطقية، مع مرافق مدرّب للتواصل بالإشارات والكتابة.
       <br>✨ لمحة سريعة عن رحلتك إلى البتراء
       <ul>

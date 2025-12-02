@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Tourism Dashboard — MyAccessibleJourney (Petra Theme)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+  /* ---------- Petra palette & base ---------- */
+  :root{
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --muted: #6b7280;
+    --text: #0f1724;
+    /* Petra sandstone / terracotta */
+    --primary: #C04E3A;            /* main Petra color */
+    --primary-600: #A54633;
+    --soft: rgba(192,78,58,0.10);  /* soft background tint */
+    --radius: 12px;
+    font-family: Inter, system-ui, "Segoe UI", Roboto, Helvetica, Arial;
+  }
+
+  html,body{
+    height:100%; margin:0; background:var(--bg); color:var(--text);
+  }
+
+  a{text-decoration:none;color:inherit}
+
+  .app{
+    display:flex; min-height:100vh; gap:20px;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:260px; background:var(--panel); border-right:1px solid #eef2f6;
+    padding:20px; box-shadow:0 6px 18px rgba(0,0,0,0.04);
+  }
+
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+  .logo{
+    width:42px;height:42px;background:linear-gradient(135deg,var(--soft),#f6e9e6);
+    border-radius:10px;font-weight:700;color:var(--primary-600);
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  .brand h2{margin:0;font-size:17px;font-weight:600}
+
+  nav{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+
+  .nav-item{
+    padding:10px;border-radius:10px;color:var(--muted);cursor:pointer;
+    display:flex;align-items:center;gap:10px;
+  }
+  .nav-item.active{background:var(--soft);color:var(--primary-600);font-weight:600}
+
+  .upgrade{
+    margin-top:20px;border:1px solid rgba(208,78,58,0.08);
+    background:linear-gradient(180deg,#fff6f4,#ffffff);
+    padding:16px;border-radius:12px;text-align:center;font-size:13px;
+  }
+
+  .btn{
+    background:var(--primary);border:none;color:white;padding:8px 12px;
+    border-radius:8px;font-size:13px;cursor:pointer;margin-top:10px;
+  }
+  .btn:hover{background:var(--primary-600)}
+
+  /* ---------- Main ---------- */
+  .main{flex:1;padding:24px;display:flex;flex-direction:column;gap:20px}
+
+  .topbar{display:flex;align-items:center;gap:12px}
+
+  .search{
+    margin-left:auto;background:var(--panel);border-radius:999px;
+    padding:8px 12px;border:1px solid #eef2f6;min-width:260px;
+    display:flex;align-items:center;gap:10px;
+  }
+
+  .search input{border:0;outline:0;background:transparent;color:var(--muted);font-size:14px;width:100%}
+
+  /* KPIs */
+  .kpis{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:16px;
+  }
+
+  .kpi{
+    background:var(--panel);border:1px solid #eef2f6;border-radius:var(--radius);
+    padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 18px rgba(0,0,0,0.03);
+  }
+  .kpi .title{font-size:13px;color:var(--muted)}
+  .kpi .value{font-size:20px;font-weight:700}
+  .chip{
+    background:var(--soft);color:var(--primary);
+    padding:6px 10px;border-radius:999px;font-size:12px;
+  }
+
+  /* Grid */
+  .grid{
+    display:grid;grid-template-columns:1.3fr .7fr;gap:16px;
+  }
+
+  .card{
+    background:var(--panel);padding:16px;border-radius:var(--radius);
+    border:1px solid #eef2f6;box-shadow:0 6px 18px rgba(0,0,0,0.03);
+  }
+
+  canvas{width:100%!important;height:260px!important}
+
+  /* Table */
+  table{width:100%;font-size:13px;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid #f1f5f9;color:var(--muted)}
+  th{font-weight:600;color:#64748b}
+  td .name{color:var(--text);font-weight:600}
+
+  /* Guides cards */
+  .guides-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .guide-card{background:var(--panel);padding:12px;border-radius:10px;border:1px solid #eef2f6;display:flex;gap:10px;align-items:center}
+  .avatar{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,var(--soft),#f6e9e6);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--primary)}
+  .guide-info{display:flex;flex-direction:column;gap:4px}
+  .guide-name{font-weight:700}
+
+  /* Forms */
+  .form-row{display:flex;gap:12px;align-items:center}
+  .input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid #e6e9f0;font-size:14px}
+
+  /* Page sections */
+  .page{display:none}
+  .page.active{display:block}
+
+  /* Responsive */
+  @media(max-width:1100px){
+    .sidebar{display:none}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .grid{grid-template-columns:1fr}
+  }
+
+
+  
+
+  .sr-only{ position:absolute!important; height:1px;width:1px;overflow:hidden; clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px; }
+
+  /* ========== GOYA CHATBOT (Notion-like, white/black) ========== */
+  /* Toggle button */
+  #goya-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: #000;
+    color: #fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    cursor:pointer;
+    z-index:1200;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  #goya-icon:focus { outline:3px solid rgba(0,0,0,0.08); outline-offset:3px; }
+
+  /* Chat panel */
+  #goya-box {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 360px;
+    max-height: 76vh;
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    display: none;
+    flex-direction: column;
+    z-index:1200;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .goya-header {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    padding:12px 14px;
+    border-bottom:1px solid #f0f0f0;
+    background: linear-gradient(180deg,#fff,#fafafa);
+  }
+  .goya-avatar {
+    width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#000; color:#fff; font-weight:700;
+  }
+  .goya-title { font-weight:700; font-size:15px; }
+  .goya-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+
+  /* Chat content */
+  .goya-chat {
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    overflow-y:auto;
+    background:transparent;
+  }
+  .goya-msg { display:flex; gap:10px; }
+  .goya-msg.bot { justify-content:flex-start; }
+  .goya-msg.user { justify-content:flex-end; }
+  .goya-bubble {
+    max-width:78%;
+    padding:10px 12px;
+    border-radius:10px;
+    line-height:1.4;
+    border:1px solid #f0f0f0;
+    background:#fff;
+    color:var(--text);
+  }
+  .goya-bubble.user { background:transparent; border:1px solid #e6e6e6; }
+
+  /* Controls */
+  .goya-controls {
+    display:flex;
+    gap:8px;
+    padding:10px;
+    border-top:1px solid #f0f0f0;
+    align-items:center;
+    background: #fff;
+  }
+  .goya-btn {
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #e6e6e6;
+    background:transparent;
+    cursor:pointer;
+    font-weight:600;
+    color:#000;
+  }
+  .goya-btn.primary { background:#000; color:#fff; border:1px solid rgba(0,0,0,0.08); }
+
+  .goya-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+
+  /* make sure it looks fine on small screens */
+  @media (max-width:420px){
+    #goya-box { right: 10px; left:10px; width: auto; bottom: 80px; max-height: 70vh; border-radius:10px; }
+    #goya-icon { right: 10px; bottom: 18px; }
+  }
+
+  /* keep existing side icons but move them a bit so they don't overlap the new chat */
+  #side-icons { right: 100px; bottom: 90px; z-index:1100; }
+
+  /* small focus for accessibility */
+  button:focus, [role="button"]:focus { outline:3px solid rgba(0,0,0,0.06); outline-offset:3px; }
+
+
+
+
+
+
+
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" aria-label="Sidebar">
+    <div class="brand"><div class="logo">MJ</div><h2>MyAccessibleJourney</h2></div>
+
+    <nav aria-label="Main navigation">
+      <div class="nav-item active" data-target="dashboard-section">Dashboard</div>
+      <div class="nav-item" data-target="guides-section">Guides</div>
+      <div class="nav-item" data-target="trips-section">Trips</div>
+      <div class="nav-item" data-target="analytics-section">Analytics</div>
+      <div class="nav-item" data-target="settings-section">Settings</div>
+    </nav>
+
+    <div class="upgrade">
+      <strong>Upgrade to Pro</strong>
+      <div style="color:var(--muted);margin-top:6px">Unlock advanced features</div>
+      <button class="btn">Upgrade</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <div style="font-size:13px;color:var(--muted)">Overview</div>
+        <div style="font-size:22px;font-weight:700">Tourism Dashboard</div>
+      </div>
+
+      <div class="search" role="search" aria-label="Search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21l-4.35-4.35" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="11" cy="11" r="6" stroke="#94a3b8" stroke-width="1.5"/>
+        </svg>
+        <input id="globalSearch" placeholder="Search guides, trips..." aria-label="Search input">
+      </div>
+    </div>
+
+    <!-- PAGES: Dashboard / Guides / Trips / Analytics / Settings -->
+    <!-- Dashboard -->
+    <section id="dashboard-section" class="page active">
+      <section class="kpis" aria-label="KPIs">
+        <div class="kpi">
+          <div class="title">Total Tourists</div>
+          <div class="value" id="k_total">—</div>
+          <div style="font-size:12px;color:var(--muted)">Compared to last month</div>
+        </div>
+
+        <div class="kpi">
+          <div class="title">Successful Trips</div>
+          <div class="value" id="k_success">—</div>
+          <div class="chip" id="k_rate">—</div>
+        </div>
+
+        <div class="kpi">
+          <div class="title">Active Users</div>
+          <div class="value" id="k_active">—</div>
+          <div style="font-size:12px;color:var(--muted)">This month</div>
+        </div>
+
+        <div class="kpi">
+          <div class="title">Global Events</div>
+          <div class="value" id="k_events">—</div>
+          <div style="font-size:12px;color:var(--muted)">Impacting tourism</div>
+        </div>
+      </section>
+
+      <section class="grid" style="margin-top:6px">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3 style="margin:0">Visitors by Region</h3>
+            <div style="display:flex;gap:8px">
+              <button id="exportRegions" class="btn" style="background:transparent;border:1px solid #eef2f6;color:var(--text)">Export</button>
+            </div>
+          </div>
+          <canvas id="regionsBar"></canvas>
+
+          <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <h3 style="font-size:14px;margin-bottom:8px">Annual Growth</h3>
+              <canvas id="growthLine"></canvas>
+            </div>
+            <div>
+              <h3 style="font-size:14px;margin-bottom:8px">Trip Success Rate</h3>
+              <canvas id="tripsDonut"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3 style="margin:0">Recent Trips</h3>
+            <div style="color:var(--muted);font-size:13px">Last 7 days</div>
+          </div>
+
+          <div style="max-height:340px;overflow:auto">
+            <table aria-label="Recent trips">
+              <thead>
+                <tr><th>Trip</th><th>Region</th><th>Visitors</th><th>Status</th></tr>
+              </thead>
+              <tbody id="tripsTable"></tbody>
+            </table>
+          </div>
+
+          <hr style="margin:14px 0;border:none;border-top:1px solid #f1f5f9">
+          <div>
+            <div style="font-size:13px;color:var(--muted)">Calendar</div>
+            <div style="font-weight:700;margin-top:6px">September 2024</div>
+            <div style="margin-top:10px;color:var(--muted)">Community growth <span style="color:green;font-weight:700">+2.1%</span> from last month</div>
+          </div>
+        </aside>
+      </section>
+    </section>
+
+    <!-- Guides -->
+    <section id="guides-section" class="page">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">Guides</h3>
+        <div style="display:flex;gap:8px">
+          <input id="guideSearch" placeholder="Search guides..." class="input" style="width:260px;border:1px solid #e9eef8;padding:8px;border-radius:8px"/>
+          <button id="addGuideBtn" class="btn">Add Guide</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px;color:var(--muted)">Our verified guides — contact info and specialties listed.</div>
+
+      <div class="guides-grid" id="guidesGrid"></div>
+    </section>
+
+    <!-- Trips -->
+    <section id="trips-section" class="page">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">Trips Management</h3>
+        <div style="display:flex;gap:8px">
+          <input id="tripFilter" placeholder="Filter by region..." class="input" style="width:240px;border:1px solid #e9eef8;padding:8px;border-radius:8px"/>
+          <button id="newTripBtn" class="btn">New Trip</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding:12px">
+        <table>
+          <thead>
+            <tr><th>Trip</th><th>Region</th><th>Start Date</th><th>Capacity</th><th>Booked</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="tripsManageTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Analytics -->
+    <section id="analytics-section" class="page">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="margin:0">Analytics</h3>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="periodSelect" class="input" style="width:150px">
+            <option value="year">Year</option>
+            <option value="month">Month</option>
+            <option value="week">Week</option>
+          </select>
+          <select id="regionSelect" class="input" style="width:160px">
+            <option value="all">All regions</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3 style="margin-top:0">Visitors Over Time</h3>
+          <canvas id="analyticsLine"></canvas>
+        </div>
+
+        <aside class="card">
+          <h3 style="margin-top:0">Breakdown</h3>
+          <canvas id="analyticsDonut"></canvas>
+          <div style="margin-top:12px;color:var(--muted);font-size:13px">Use filters to refine data. Charts update automatically.</div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="settings-section" class="page">
+      <h3>Settings</h3>
+      <div style="display:grid;grid-template-columns:1fr 380px;gap:16px;margin-top:12px">
+        <div class="card">
+          <form id="settingsForm" onsubmit="return false;">
+            <div style="margin-bottom:10px">
+              <label style="display:block;font-weight:600;margin-bottom:6px">Organization Name</label>
+              <input id="orgName" class="input" value="MyAccessibleJourney">
+            </div>
+
+            <div style="margin-bottom:10px">
+              <label style="display:block;font-weight:600;margin-bottom:6px">Contact Email</label>
+              <input id="orgEmail" type="email" class="input" value="contact@myaccessiblejourney.org">
+            </div>
+
+            <div style="margin-bottom:10px">
+              <label style="display:block;font-weight:600;margin-bottom:6px">Default Region</label>
+              <select id="defaultRegion" class="input"></select>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button id="saveSettings" class="btn">Save</button>
+              <button id="resetSettings" class="btn" style="background:transparent;border:1px solid #eef2f6;color:var(--text)">Reset</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h4 style="margin-top:0">Profile</h4>
+          <div style="display:flex;gap:12px;align-items:center;margin-top:12px">
+            <div class="avatar" style="width:64px;height:64px;border-radius:12px;font-size:20px">MJ</div>
+            <div>
+              <div style="font-weight:700">Admin</div>
+              <div style="color:var(--muted)">admin@myaccessiblejourney.org</div>
+            </div>
+          </div>
+
+          <hr style="margin:12px 0;border:none;border-top:1px solid #f1f5f9">
+          <div style="font-size:13px;color:var(--muted)">Preferences</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <label style="display:flex;align-items:center;gap:8px"><input id="toggleCompact" type="checkbox"> Compact layout</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* =========================
+   Single-file demo data & state
+   ========================= */
+const state = {
+  regions: [
+    { name: "Petra", tourists: 480000 },
+    { name: "Wadi Rum", tourists: 210000 },
+    { name: "Dead Sea", tourists: 330000 },
+    { name: "Ajloun", tourists: 90000 },
+    { name: "Amman", tourists: 760000 },
+    { name: "Jerash", tourists: 120000 },
+    { name: "Aqaba", tourists: 200000 }
+  ],
+  annualGrowth: [
+    { year: 2018, tourists: 1200000 },
+    { year: 2019, tourists: 1350000 },
+    { year: 2020, tourists: 420000 },
+    { year: 2021, tourists: 700000 },
+    { year: 2022, tourists: 980000 },
+    { year: 2023, tourists: 1250000 },
+    { year: 2024, tourists: 1400000 }
+  ],
+  tripsSummary: { successful: 8420, failed: 630 },
+  eventsActive: 18,
+  activeUsers: 16815,
+  recentTrips: [
+    { id: 1, title: "Classic Petra Tour", region: "Petra", visitors: 120, status: "Completed", date: "2024-09-18" },
+    { id: 2, title: "Night in Wadi Rum", region: "Wadi Rum", visitors: 48, status: "Completed", date: "2024-09-17" },
+    { id: 3, title: "Dead Sea Relax", region: "Dead Sea", visitors: 76, status: "Canceled", date: "2024-09-16" },
+    { id: 4, title: "Ajloun Hiking", region: "Ajloun", visitors: 22, status: "Completed", date: "2024-09-15" },
+    { id: 5, title: "Historical Amman", region: "Amman", visitors: 89, status: "Completed", date: "2024-09-14" },
+    { id: 6, title: "Jerash Excursion", region: "Jerash", visitors: 64, status: "Canceled", date: "2024-09-13" },
+    { id: 7, title: "Aqaba Diving", region: "Aqaba", visitors: 34, status: "Completed", date: "2024-09-12" }
+  ],
+  guides: [
+    { id: 1, name: "Aisha Al-Omari", region: "Petra", languages: ["Arabic","English"], phone: "+962-7-7000-0001" },
+    { id: 2, name: "Omar Haddad", region: "Wadi Rum", languages: ["Arabic","English","German"], phone: "+962-7-7000-0002" },
+    { id: 3, name: "Lina Saad", region: "Dead Sea", languages: ["Arabic","English"], phone: "+962-7-7000-0003" },
+    { id: 4, name: "Yousef N.", region: "Amman", languages: ["Arabic","English","French"], phone: "+962-7-7000-0004" }
+  ]
+};
+
+/* Utilities */
+const fmt = n => n.toLocaleString();
+
+/* Sidebar tab switching */
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const target = btn.dataset.target;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    if(target === 'analytics-section') refreshAnalyticsCharts();
+  });
+});
+
+/* --- Initialize dashboard content --- */
+function initDashboard() {
+  // KPIs
+  document.getElementById("k_total").textContent = fmt(state.annualGrowth.at(-1).tourists);
+  document.getElementById("k_success").textContent = fmt(state.tripsSummary.successful);
+  document.getElementById("k_active").textContent = fmt(state.activeUsers);
+  document.getElementById("k_events").textContent = state.eventsActive;
+  document.getElementById("k_rate").textContent =
+    Math.round((state.tripsSummary.successful / (state.tripsSummary.successful + state.tripsSummary.failed))*100) + "%";
+
+  // Recent trips table (dashboard)
+  renderRecentTripsTable();
+
+  // Trips manage table
+  renderTripsManageTable();
+
+  // Guides grid
+  renderGuides();
+
+  // Populate region selects
+  populateRegionSelects();
+
+  // Settings defaults
+  document.getElementById('orgName').value = 'MyAccessibleJourney';
+  document.getElementById('orgEmail').value = 'contact@myaccessiblejourney.org';
+  const defaultRegion = document.getElementById('defaultRegion');
+  state.regions.forEach(r => {
+    const opt = document.createElement('option'); opt.value = r.name; opt.text = r.name; defaultRegion.appendChild(opt);
+  });
+  defaultRegion.value = state.regions[0].name;
+
+  // Charts
+  createCharts();
+}
+
+/* --- Recent trips on dashboard --- */
+function renderRecentTripsTable(){
+  const tbody = document.getElementById('tripsTable'); tbody.innerHTML = '';
+  state.recentTrips.slice(0,7).forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><div class="name">${t.title}</div></td>
+                    <td>${t.region}</td>
+                    <td>${t.visitors}</td>
+                    <td style="color:${t.status==='Completed'?'green':'#dc2626'}">${t.status}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* --- Trips management table (with simple actions) --- */
+function renderTripsManageTable(filter='') {
+  const tbody = document.getElementById('tripsManageTable'); tbody.innerHTML = '';
+  state.recentTrips.forEach(t => {
+    if(filter && t.region.toLowerCase().indexOf(filter.toLowerCase()) === -1) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><div class="name">${t.title}</div></td>
+                    <td>${t.region}</td>
+                    <td>${t.date}</td>
+                    <td>—</td>
+                    <td>${t.visitors}</td>
+                    <td style="color:${t.status==='Completed'?'green':'#dc2626'}">${t.status}</td>
+                    <td><button data-id="${t.id}" class="editBtn" style="padding:6px;border-radius:6px;border:1px solid #eef2f6;background:transparent;cursor:pointer">Edit</button>
+                        <button data-id="${t.id}" class="deleteBtn" style="padding:6px;border-radius:6px;border:1px solid #eef2f6;background:transparent;cursor:pointer;margin-left:6px">Delete</button></td>`;
+    tbody.appendChild(tr);
+  });
+
+  // attach handlers
+  tbody.querySelectorAll('.deleteBtn').forEach(b => b.addEventListener('click', e => {
+    const id = +e.currentTarget.dataset.id;
+    state.recentTrips = state.recentTrips.filter(t => t.id !== id);
+    renderRecentTripsTable();
+    renderTripsManageTable(document.getElementById('tripFilter').value);
+    updateSummaryAndCharts();
+  }));
+}
+
+/* --- Guides --- */
+function renderGuides(filter='') {
+  const grid = document.getElementById('guidesGrid'); grid.innerHTML = '';
+  state.guides.forEach(g => {
+    if(filter && (g.name.toLowerCase().indexOf(filter.toLowerCase())===-1) && (g.region.toLowerCase().indexOf(filter.toLowerCase())===-1)) return;
+    const card = document.createElement('div'); card.className = 'guide-card';
+    card.innerHTML = `<div class="avatar">${g.name.split(' ').map(s=>s[0]).slice(0,2).join('')}</div>
+      <div class="guide-info"><div class="guide-name">${g.name}</div><div style="font-size:13px;color:var(--muted)">${g.region} • ${g.languages.join(', ')}</div><div style="font-size:13px;color:var(--muted);margin-top:6px">${g.phone}</div></div>`;
+    grid.appendChild(card);
+  });
+}
+
+/* --- Populate region selects --- */
+function populateRegionSelects(){
+  const regionSelect = document.getElementById('regionSelect');
+  regionSelect.innerHTML = '<option value="all">All regions</option>';
+  state.regions.forEach(r => {
+    const opt = document.createElement('option'); opt.value = r.name; opt.text = r.name; regionSelect.appendChild(opt);
+  });
+}
+
+/* --- Adding a guide (simple modal-less inline form) --- */
+document.getElementById('addGuideBtn').addEventListener('click', () => {
+  const name = prompt('Guide full name (e.g. John Doe)');
+  if(!name) return;
+  const region = prompt('Region (e.g. Petra)');
+  if(!region) return;
+  const langs = prompt('Languages (comma separated, e.g. Arabic,English)');
+  const id = (state.guides.at(-1)?.id || 0) + 1;
+  state.guides.push({ id, name, region, languages: langs ? langs.split(',').map(s=>s.trim()) : ['English'] , phone: '—' });
+  renderGuides();
+});
+
+/* --- Creating a new trip --- */
+document.getElementById('newTripBtn').addEventListener('click', () => {
+  const title = prompt('Trip title (e.g. Petra Sunrise)');
+  if(!title) return;
+  const region = prompt('Region (e.g. Petra)');
+  if(!region) return;
+  const visitors = +prompt('Initial visitors count', '0') || 0;
+  const date = prompt('Start date (YYYY-MM-DD)', new Date().toISOString().slice(0,10));
+  const id = (state.recentTrips.at(-1)?.id || 0) + 1;
+  state.recentTrips.unshift({ id, title, region, visitors, status: 'Planned', date });
+  renderRecentTripsTable();
+  renderTripsManageTable(document.getElementById('tripFilter').value);
+  updateSummaryAndCharts();
+});
+
+/* --- Filters and search handlers --- */
+document.getElementById('tripFilter').addEventListener('input', (e) => renderTripsManageTable(e.target.value));
+document.getElementById('guideSearch').addEventListener('input', (e) => renderGuides(e.target.value));
+document.getElementById('globalSearch').addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  if(!q){ renderGuides(); renderTripsManageTable(); renderRecentTripsTable(); return; }
+  renderGuides(q);
+  renderTripsManageTable(q);
+  // filter recent trips on dashboard too
+  const filtered = state.recentTrips.filter(t => t.title.toLowerCase().includes(q) || t.region.toLowerCase().includes(q));
+  const tbody = document.getElementById('tripsTable'); tbody.innerHTML = '';
+  filtered.slice(0,7).forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><div class="name">${t.title}</div></td>
+                    <td>${t.region}</td>
+                    <td>${t.visitors}</td>
+                    <td style="color:${t.status==='Completed'?'green':'#dc2626'}">${t.status}</td>`;
+    tbody.appendChild(tr);
+  });
+});
+
+/* --- Save/Reset settings --- */
+document.getElementById('saveSettings').addEventListener('click', () => {
+  alert('Settings saved locally (demo).');
+});
+document.getElementById('resetSettings').addEventListener('click', () => {
+  document.getElementById('settingsForm').reset();
+});
+
+/* --- Compact toggle --- */
+document.getElementById('toggleCompact').addEventListener('change', (e) => {
+  document.body.style.fontSize = e.target.checked ? '13px' : '';
+});
+
+/* --- Charts (Chart.js instances kept to update easily) --- */
+let charts = {};
+function createCharts(){
+  // Regions bar
+  const ctxRegions = document.getElementById('regionsBar').getContext('2d');
+  charts.regions = new Chart(ctxRegions, {
+    type: 'bar',
+    data: {
+      labels: state.regions.map(r=>r.name),
+      datasets: [{ data: state.regions.map(r=>r.tourists), backgroundColor: 'var(--primary)', borderRadius: 8 }]
+    },
+    options: { plugins:{legend:{display:false}}, scales:{x:{grid:{display:false},ticks:{color:'#64748b'}}, y:{ticks:{color:'#64748b'}}} }
+  });
+
+  // Growth line
+  const ctxGrowth = document.getElementById('growthLine').getContext('2d');
+  charts.growth = new Chart(ctxGrowth, {
+    type: 'line',
+    data: {
+      labels: state.annualGrowth.map(a=>a.year),
+      datasets: [{ data: state.annualGrowth.map(a=>a.tourists), borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#C04E3A', backgroundColor: 'rgba(192,78,58,0.10)', fill:true, tension:0.28 }]
+    }, options:{plugins:{legend:{display:false}}}
+  });
+
+  // Trips donut
+  const ctxDonut = document.getElementById('tripsDonut').getContext('2d');
+  charts.donut = new Chart(ctxDonut, {
+    type:'doughnut',
+    data:{ labels: ['Completed','Failed'], datasets: [{ data: [state.tripsSummary.successful, state.tripsSummary.failed], backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#C04E3A','#e5e7eb'] }] },
+    options:{plugins:{legend:{position:'bottom'}}}
+  });
+
+  // Analytics charts (initial)
+  const ctxAnLine = document.getElementById('analyticsLine').getContext('2d');
+  charts.analyticLine = new Chart(ctxAnLine, {
+    type:'line',
+    data:{ labels: state.annualGrowth.map(a=>a.year), datasets:[{ data: state.annualGrowth.map(a=>a.tourists), borderColor:getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#C04E3A', backgroundColor:'rgba(192,78,58,0.06)', fill:true }]},
+    options:{plugins:{legend:{display:false}}}
+  });
+
+  const ctxAnDonut = document.getElementById('analyticsDonut').getContext('2d');
+  charts.analyticDonut = new Chart(ctxAnDonut, {
+    type:'doughnut',
+    data:{ labels: state.regions.map(r=>r.name), datasets:[{ data: state.regions.map(r=>r.tourists), backgroundColor: state.regions.map((_,i)=> i%2 ? '#F7C6B8' : '#F2A98B') }]},
+    options:{plugins:{legend:{display:false}}}
+  });
+}
+
+/* --- When data mutates, update charts and KPIs --- */
+function updateSummaryAndCharts(){
+  // update KPIs
+  document.getElementById("k_total").textContent = fmt(state.annualGrowth.at(-1).tourists);
+  document.getElementById("k_success").textContent = fmt(state.tripsSummary.successful);
+  document.getElementById("k_active").textContent = fmt(state.activeUsers);
+  document.getElementById("k_events").textContent = state.eventsActive;
+  document.getElementById("k_rate").textContent =
+    Math.round((state.tripsSummary.successful / (state.tripsSummary.successful + state.tripsSummary.failed))*100) + "%";
+
+  // update charts datasets where relevant
+  if(charts.regions){
+    charts.regions.data.labels = state.regions.map(r=>r.name);
+    charts.regions.data.datasets[0].data = state.regions.map(r=>r.tourists);
+    charts.regions.update();
+  }
+  if(charts.analyticDonut){
+    charts.analyticDonut.data.labels = state.regions.map(r=>r.name);
+    charts.analyticDonut.data.datasets[0].data = state.regions.map(r=>r.tourists);
+    charts.analyticDonut.update();
+  }
+  if(charts.growth){
+    charts.growth.data.labels = state.annualGrowth.map(a=>a.year);
+    charts.growth.data.datasets[0].data = state.annualGrowth.map(a=>a.tourists);
+    charts.growth.update();
+  }
+  // refresh recent trips & manage table
+  renderRecentTripsTable();
+  renderTripsManageTable(document.getElementById('tripFilter').value);
+}
+
+/* --- Export regions chart PNG --- */
+document.getElementById('exportRegions').addEventListener('click', () => {
+  const a = document.createElement('a'); a.href = charts.regions.toBase64Image(); a.download = 'regions.png'; document.body.appendChild(a); a.click(); a.remove();
+});
+
+/* --- Analytics filters handling --- */
+document.getElementById('periodSelect').addEventListener('change', refreshAnalyticsCharts);
+document.getElementById('regionSelect').addEventListener('change', refreshAnalyticsCharts);
+
+function refreshAnalyticsCharts(){
+  const period = document.getElementById('periodSelect').value;
+  const region = document.getElementById('regionSelect').value;
+
+  // Line: simulate different aggregation by period
+  let labels = [], values = [];
+  if(period === 'year'){
+    labels = state.annualGrowth.map(a=>a.year);
+    values = state.annualGrowth.map(a=>a.tourists);
+  } else if(period === 'month'){
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    labels = months;
+    const base = Math.round(state.annualGrowth.at(-1).tourists / 12);
+    values = months.map((m,i)=> base + Math.round(Math.sin(i/2)*base*0.08));
+  } else {
+    labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    values = labels.map((d,i)=> Math.round(5000 + Math.cos(i)*3000));
+  }
+
+  if(region !== 'all'){
+    const r = state.regions.find(x=>x.name===region);
+    const scale = r ? (r.tourists / state.annualGrowth.at(-1).tourists) : 1;
+    values = values.map(v => Math.round(v * scale));
+  }
+
+  charts.analyticLine.data.labels = labels;
+  charts.analyticLine.data.datasets[0].data = values;
+  charts.analyticLine.update();
+
+  if(region === 'all'){
+    charts.analyticDonut.data.labels = state.regions.map(r=>r.name);
+    charts.analyticDonut.data.datasets[0].data = state.regions.map(r=>r.tourists);
+  } else {
+    charts.analyticDonut.data.labels = ['Selected region','Others'];
+    const r = state.regions.find(x=>x.name===region);
+    const val = r ? r.tourists : 0;
+    const others = state.regions.reduce((s,c)=>s + c.tourists, 0) - val;
+    charts.analyticDonut.data.datasets[0].data = [val, others];
+  }
+  charts.analyticDonut.update();
+}
+
+/* --- Initialize everything on load --- */
+initDashboard();
+createCharts();
+refreshAnalyticsCharts();
+</script>
+
+
+
+<!-- ===== GOYA CHATBOT (replaces old chatbot) ===== -->
+<div id="goya-icon" role="button" aria-label="فتح الدردشة" tabindex="0">💬</div>
+
+<div id="goya-box" role="dialog" aria-label="مساعد الرحّال" aria-hidden="true">
+  <div class="goya-header">
+    <div class="goya-avatar" aria-hidden>G</div>
+    <div>
+      <div class="goya-title">GOYA — مساعد الرحّال</div>
+      <div class="goya-sub">plan your trip</div>
+    </div>
+  </div>
+
+  <div class="goya-chat" id="goya-chat" aria-live="polite" aria-atomic="false"></div>
+
+  <div class="goya-controls" id="goya-controls">
+    <button class="goya-btn primary" id="goya-start" aria-label="جهّز رحلة">جهّز لي رحلة</button>
+    <button class="goya-btn" id="goya-changeName" aria-label="تغيير الاسم"> ( محمد)</button>
+    <div style="margin-inline-start:auto; display:flex; gap:8px; align-items:center;">
+      <button class="goya-btn" id="goya-voiceInput" aria-pressed="false" title="تحويل الصوت لنص">🎤</button>
+      <button class="goya-btn" id="goya-voiceOutput" aria-pressed="false" title="قراءة الرد">🔊</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== existing donut script (unchanged) ===== -->
+<script>
+  (function () {
+    const pie = document.querySelector('.pie-chart');
+    if (!pie) return;
+    const percent = Math.max(0, Math.min(100, Number(pie.getAttribute('data-percent') || 0)));
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6b3b20';
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--donut-bg').trim() || '#efecec';
+    pie.style.background = `conic-gradient(${accent} 0% ${percent}%, ${bg} ${percent}% 100%)`;
+    const center = document.getElementById('donut-value');
+    if (center) center.querySelector('.percent').textContent = percent + '%';
+  })();
+</script>
+
+<!-- ===== GOYA chatbot script (new) ===== -->
+<script>
+  (function () {
+    // Elements
+    const icon = document.getElementById('goya-icon');
+    const box = document.getElementById('goya-box');
+    const chat = document.getElementById('goya-chat');
+    const startBtn = document.getElementById('goya-start');
+    const changeNameBtn = document.getElementById('goya-changeName');
+    const voiceInputBtn = document.getElementById('goya-voiceInput');
+    const voiceOutputBtn = document.getElementById('goya-voiceOutput');
+
+    // state
+    let userName = 'محمد';
+    let recognition;
+    let lastBotText = '';
+
+    // accessibility helpers
+    function announce(text){
+      // optionally add an offscreen element or rely on aria-live on chat container
+      // chat has aria-live, so appending a bot message is sufficient
+    }
+
+    // Render message
+    function appendMessage(html, who='bot'){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'goya-msg ' + (who === 'bot' ? 'bot' : 'user');
+      const bubble = document.createElement('div');
+      bubble.className = 'goya-bubble' + (who === 'user' ? ' user' : '');
+      bubble.innerHTML = html;
+      wrapper.appendChild(bubble);
+      chat.appendChild(wrapper);
+      chat.scrollTop = chat.scrollHeight;
+      if(who === 'bot') lastBotText = bubble.innerText || bubble.textContent || '';
+    }
+
+    // small typing simulation then final
+    async function botSay(text, {delay = 300} = {}){
+      // show typing
+      const typing = document.createElement('div');
+      typing.className = 'goya-msg bot';
+      typing.innerHTML = '<div class="goya-bubble">...</div>';
+      chat.appendChild(typing);
+      chat.scrollTop = chat.scrollHeight;
+      await new Promise(r => setTimeout(r, delay));
+      typing.remove();
+      appendMessage(text, 'bot');
+      announce(text);
+    }
+
+    // initial greeting
+    function greet(){
+      const t = `مرحباً ${userName}، يسعدنا نجهّز لك خُطّة رحلة مناسبة. جاهز؟`;
+      botSay(t, {delay: 350});
+    }
+
+    // open/close handlers
+    function openBox(){
+      box.style.display = 'flex';
+      box.setAttribute('aria-hidden', 'false');
+      // if empty, greet
+      if(chat.innerHTML.trim() === '') greet();
+    }
+    function closeBox(){
+      box.style.display = 'none';
+      box.setAttribute('aria-hidden', 'true');
+    }
+
+    icon.addEventListener('click', () => {
+      if(box.style.display === 'flex') closeBox();
+      else openBox();
+    });
+    icon.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); icon.click(); } });
+
+    // Chat flows: start -> show choices -> Petra/DeadSea handlers
+    function showChoices(){
+      // show 2 buttons inside chat as quick replies
+      const controls = document.createElement('div');
+      controls.className = 'goya-actions';
+      const petra = document.createElement('button');
+      petra.className = 'goya-btn';
+      petra.type = 'button';
+      petra.textContent = 'البترا';
+      petra.onclick = () => { appendMessage('البترا', 'user'); petraHandler(); controls.remove(); };
+
+      const dead = document.createElement('button');
+      dead.className = 'goya-btn';
+      dead.type = 'button';
+      dead.textContent = 'البحر الميت';
+      dead.onclick = () => { appendMessage('البحر الميت', 'user'); deadSeaHandler(); controls.remove(); };
+
+      controls.appendChild(petra);
+      controls.appendChild(dead);
+      chat.appendChild(controls);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    startBtn.addEventListener('click', () => {
+      appendMessage('جهّز لي رحلة', 'user');
+      botSay(`أهلاً ${userName} — اختر وجهتك المفضلة أو أخبرني وجهة أخرى ترغب بها.
+1) البتراء
+2) البحر الميت`, {delay: 260}).then(()=> showChoices());
+    });
+
+    function petraHandler(){
+      const petraText = `اختيار رائع يا ${userName}! البتراء تجربة مدهشة — مسار مريح عبر السيق، محطات استراحة، ودعم تواصل بالإشارات والكتابة.
+<br><br>🗺️ <strong>مخطط مبسّط</strong><br>08:00 انطلاق — 10:00 وصول — 14:00 عودة
+<br><br><a href="petra_trip.html" target="_blank">تفاصيل الحجز</a>`;
+      botSay(petraText);
+    }
+
+    function deadSeaHandler(){
+      const deadText = `البحر الميت خيار هادئ ومريح — استرخاء، طين طبيعي، ومناطق جلوس مظللة.
+<br><br>🗺️ <strong>مخطط مبسّط</strong><br>09:00 انطلاق — 10:00 وصول — 16:30 عودة
+<br><br><a href="deadesa.html" target="_blank">تفاصيل الحجز</a>`;
+      botSay(deadText);
+    }
+
+    // change name
+    changeNameBtn.addEventListener('click', () => {
+      const newName = prompt('اكتب الاسم اللي تفضّل أن يُنادى به:', userName);
+      if(newName && newName.trim().length>0){
+        userName = newName.trim();
+        changeNameBtn.textContent = ` ( ${userName})`;
+        appendMessage(`${userName} (غيّر الاسم)`, 'user');
+        botSay(`تم تحديث الاسم إلى ${userName} — جاهز تكمل؟`);
+      }
+    });
+
+    // Text-to-Speech (reads last bot reply)
+    function speakText(text){
+      if(!('speechSynthesis' in window)) { alert('متصفحك لا يدعم قراءة النص صوتياً'); return; }
+      const clean = text.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '');
+      const u = new SpeechSynthesisUtterance(clean);
+      u.lang = 'ar-JO';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
+
+    voiceOutputBtn.addEventListener('click', () => {
+      if(!lastBotText) {
+        alert('لا يوجد رد لقراءته حالياً');
+        return;
+      }
+      speakText(lastBotText);
+    });
+
+    // Speech-to-Text (basic)
+    function initRecognition(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR) return null;
+      const r = new SR();
+      r.lang = 'ar-JO';
+      r.interimResults = false;
+      r.continuous = false;
+      return r;
+    }
+
+    voiceInputBtn.addEventListener('click', () => {
+      if(!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+        alert('المتصفح لا يدعم تحويل الصوت إلى نص');
+        return;
+      }
+      recognition = initRecognition();
+      if(!recognition) { alert('تعذر تهيئة المحرر الصوتي'); return; }
+
+      appendMessage('🎤 ... جاري الاستماع', 'bot');
+      recognition.start();
+      recognition.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        appendMessage(text, 'user');
+        // You could route the text as a user input to the bot; for now show choices if contains keywords
+        const lower = text.toLowerCase();
+        if(lower.includes('بترا') || lower.includes('البتراء')) petraHandler();
+        else if(lower.includes('بحر') || lower.includes('مميت') || lower.includes('البحر')) deadSeaHandler();
+        else botSay('شكراً! يمكنك اختيار واحدة من الأزرار أو كتابة وجهة معينة.');
+      };
+      recognition.onerror = (err) => { console.error(err); };
+      recognition.onend = () => { /* nothing */ };
+    });
+
+    // keyboard support: close on Esc
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        if(box.style.display === 'flex') closeBox();
+      }
+    });
+
+    // ensure initial aria-hidden
+    box.setAttribute('aria-hidden', 'true');
+
+    // Expose small helper for programmatic open (optional)
+    window.GOYA = { open: openBox, close: closeBox };
+
+  })();
+</script>
+
+</body>
+</html>

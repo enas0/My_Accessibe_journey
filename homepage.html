@@ -1,250 +1,1095 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Accessible Journey</title>
 
 <style>
-    * {
+    :root{
+      --max-width:1200px;
+      --pad:24px;
+      --bg: #fff;
+      --section-bg: #fcfcfc;
+      --card-bg: #ffffff;
+      --muted: #6b6b6b;
+      --muted-strong: #8a8a8a;
+      --text: #111;
+      --accent: #6b3b20;
+      --donut-bg: #efecec;
+    }
+
+    * { box-sizing: border-box; }
+    body {
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', sans-serif;
+        background: var(--section-bg);
+        color: var(--text);
     }
 
-    body {
-        background-color: #ffffff;
-    }
-
-    .head {
+    /* Hero Background */
+    .hero {
+        position: relative;
+        width: 100%;
+        height: 100vh;
         background-image: url("img/dead_sea.webp");
         background-size: cover;
         background-position: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
-    /* ===== NAVBAR ===== */
-    nav {
+    /* Dark overlay */
+    .hero::before {
+        content: "";
         position: absolute;
-        top: 0;
-        left: 0;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+    }
+
+    /* Navbar */
+    .navbar {
+        position: absolute;
+        top: 20px;
         width: 100%;
-        padding: 25px 40px;
+        padding: 0 40px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        z-index: 10;
+        z-index: 2;
     }
 
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: bold;
+    .navbar .logo {
         color: white;
+        font-size: 18px;
+        font-weight: 600;
     }
 
-    .nav-links {
+    .navbar ul {
         display: flex;
         gap: 30px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
         align-items: center;
     }
 
-    .nav-links a {
-        text-decoration: none;
-        font-size: 16px;
+    .navbar ul li a {
         color: white;
-        transition: 0.3s ease;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 400;
     }
 
-    .logout-btn {
-        padding: 8px 18px;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(4px);
-        border: 1px solid rgba(255,255,255,0.4);
+    .signup-btn {
+        padding: 6px 16px;
+        border: 1px solid white;
+        border-radius: 6px;
         color: white;
         text-decoration: none;
         font-size: 14px;
     }
 
-    /* ===== HERO SECTION ===== */
-    header {
-        height: 100vh;
-        width: 100%;
+    /* Hero Text */
+    .content {
         position: relative;
-    }
-
-    header::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("img/dead_sea.webp");
-        background-size: cover;
-        background-position: center;
-        filter: brightness(60%);
-    }
-
-    .hero {
-        position: relative;
+        z-index: 2;
+        text-align: center;
         color: white;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        z-index: 5;
+        margin-top: -40px;
     }
 
-    header {
-        border-bottom-left-radius: 40px;
-        border-bottom-right-radius: 40px;
-        overflow: hidden;
+    .content h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin: 0 0 10px;
     }
 
-    /* ========= FULLSCREEN SECTIONS ========= */
-    .section {
-        height: 100vh;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 60px;
-        gap: 50px;
-    }
-
-    .section .text {
-        flex: 1;
-    }
-
-    .section .text h2 {
-        font-size: 40px;
-        margin-bottom: 20px;
-        color: #222;
-    }
-
-    .section .text p {
+    .content p {
         font-size: 18px;
-        line-height: 1.6;
-        color: #555;
+        margin-bottom: 25px;
     }
 
-    .section img {
-        width: 45%;
-        border-radius: 20px;
+    .start-btn {
+        padding: 12px 28px;
+        background: #111;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 6px;
+    }
+
+    .section-container {
+        max-width: 1200px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 60px;
+        align-items: center;
+    }
+
+    .text-block h2 {
+        font-size: 28px;
+        margin: 0 0 12px;
+        font-weight: 700;
+    }
+
+    .text-block p {
+        color: #444;
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        padding: 12px 22px;
+        background: #111;
+        color: #fff;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .image-block img {
+        width: 100%;
+        height: 260px;
         object-fit: cover;
+        border-radius: 12px;
     }
 
-    /* ===== EVENTS CARD SECTION ===== */
-    .events-card {
-        background: #f8f8f8;
-        border-radius: 25px;
-        padding: 40px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        width: 70%;
-        text-align: center;
+    .wrap{
+      max-width:var(--max-width);
+      margin:48px auto;
+      padding:0 28px;
     }
 
-    .events-card h2 {
-        font-size: 36px;
-        margin-bottom: 20px;
+    .section{
+      display:grid;
+      grid-template-columns:1fr 480px;
+      gap:48px;
+      align-items:center;
     }
 
-    .events-card .event-item {
-        background: white;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 15px;
-        border: 1px solid #eaeaea;
-        text-align: left;
+    /* Left column (text) */
+    .left h2{
+      margin:0 0 18px 0;
+      font-size:32px;
+      font-weight:800;
+    }
+    .item{
+      margin-bottom:20px;
+    }
+    .item h3{
+      margin:0 0 8px 0;
+      font-size:16px;
+      font-weight:700;
+    }
+    .item p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:14px;
+      max-width:520px;
     }
 
-    /* ===== RESPONSIVE ===== */
+    .cta{
+      display:inline-block;
+      margin-top:22px;
+      background:#111;
+      color:#fff;
+      padding:12px 26px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .image-card{
+      background:var(--card-bg);
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+      height:420px;
+    }
+    .image-card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    @media (max-width:980px){
+      .section{ grid-template-columns: 1fr; }
+      .image-card{ height:320px; }
+    }
+
+    a:focus{ outline:3px solid rgba(11,74,111,0.14); outline-offset:3px }
+
+    .sectioncontainer {
+        max-width: 1150px;
+        margin: auto;
+    }
+
+    h2 {
+        font-size: 32px;
+        margin-bottom: 30px;
+        font-weight: 800;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px 60px;
+    }
+
+    .item {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .icon {
+        font-size: 26px;
+        margin-top: 4px;
+    }
+
+    .item h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .item p {
+        margin: 0;
+        color: #555;
+        line-height: 1.6;
+        font-size: 15px;
+        max-width: 460px;
+    }
+
     @media (max-width: 900px) {
-        .section {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .section img {
-            width: 90%;
+        .grid {
+            grid-template-columns: 1fr;
         }
     }
+
+  /* Stats Section */
+  .stats-section{ padding:48px 36px; }
+  .stats-inner{ max-width:1200px; margin:0 auto; display:flex; gap:36px; align-items:flex-start; }
+
+  .left-col{ flex:1 1 520px; min-width:280px; }
+  .page-title{ font-size:34px; margin:6px 0 26px; font-weight:800; color:var(--text); }
+  .cards-column{ display:flex; flex-direction:column; gap:18px; }
+
+  .stat-card{ background:var(--card-bg); padding:18px; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,0.04); border:1px solid rgba(0,0,0,0.03); }
+  .icon{ width:36px; height:36px; display:inline-block; color:#222; margin-bottom:8px; }
+  .stat-card h3{ margin:6px 0 6px; font-size:16px; font-weight:700; }
+  .muted-strong{ color:var(--muted-strong); font-size:13px; margin:0 0 6px; }
+  .stat-card p{ margin:0; color:var(--muted); font-size:13px; line-height:1.45; }
+
+  .right-col{ width:420px; display:flex; flex-direction:column; align-items:center; gap:18px; }
+
+  .donut-wrap{ background: #fff; padding:22px; border-radius:14px; border:1px solid rgba(0,0,0,0.04); box-shadow:0 8px 20px rgba(0,0,0,0.03); width:100%; display:flex; flex-direction:column; align-items:center; }
+
+  .pie-chart{
+    width:380px; height:380px; border-radius:50%;
+    background: conic-gradient(var(--accent) 0% 35%, var(--donut-bg) 35% 100%);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+
+  .center-text{ position: absolute; width:170px; height:170px; border-radius:50%; background:var(--card-bg); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.04); }
+  .center-text .percent{ font-size:36px; font-weight:800; color:var(--text); }
+  .center-text .label{ font-size:13px; color:var(--muted); margin-top:6px; }
+
+  .kpi-row{ display:flex; gap:12px; margin-top:14px; width:100%; justify-content:center; }
+  .kpi{ background:#fff; border-radius:10px; padding:12px 14px; flex:1 1 0; display:flex; flex-direction:column; align-items:center; border:1px solid rgba(0,0,0,0.04); }
+  .kpi-icon{ width:30px; height:30px; color:var(--muted); margin-bottom:8px; }
+  .kpi-num{ font-weight:800; font-size:20px; }
+  .kpi-label{ font-size:12px; color:var(--muted); margin-top:4px; }
+
+  @media (max-width: 1100px){
+    .stats-inner{ gap:24px; }
+    .pie-chart{ width:320px; height:320px; }
+    .center-text{ width:150px; height:150px; }
+  }
+  @media (max-width: 820px){
+    .stats-inner{ flex-direction:column; align-items:center; }
+    .right-col{ order: -1; width:100%; }
+    .left-col{ width:100%; }
+    .pie-chart{ width:260px; height:260px; }
+    .center-text{ width:120px; height:120px; }
+  }
+
+  /* Footer */
+  footer.site-footer{
+    border-top:1px solid #eee;
+    padding:28px var(--pad);
+    background: #fff;
+  }
+
+  .footer-inner{
+    max-width:var(--max-width);
+    margin: 2px  auto;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:24px;
+    padding: 30px;
+    align-items:start;
+  }
+
+  .footer-brand{ display:flex; flex-direction:column; gap:18px; }
+  .brand-name{ font-weight:600; }
+  .brand-name img{ height:120px; width:150px; display:block; }
+
+  .social{ display:flex; gap:12px; align-items:center; }
+  .social a{ display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:50%; background:#f2f4f6; color:var(--muted); text-decoration:none; font-size:14px; }
+
+  .footer-links{ display:grid; grid-template-columns: repeat(3, minmax(120px,1fr)); gap:18px 36px; align-items:start; }
+  .links-column h4{ margin:0 0 12px 0; font-size:14px; font-weight:700; }
+  .links-column ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
+  .links-column a{ color:var(--muted); text-decoration:none; font-size:14px; }
+
+  @media (max-width:880px){
+    .footer-inner{ grid-template-columns: 1fr; }
+    .footer-links{ grid-template-columns: repeat(2, minmax(120px,1fr)); margin-top:8px; }
+  }
+
+  .sr-only{ position:absolute!important; height:1px;width:1px;overflow:hidden; clip:rect(1px,1px,1px,1px);white-space:nowrap;border:0;padding:0;margin:-1px; }
+
+  /* ========== GOYA CHATBOT (Notion-like, white/black) ========== */
+  /* Toggle button */
+  #goya-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    background: #000;
+    color: #fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    cursor:pointer;
+    z-index:1200;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  #goya-icon:focus { outline:3px solid rgba(0,0,0,0.08); outline-offset:3px; }
+
+  /* Chat panel */
+  #goya-box {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 360px;
+    max-height: 76vh;
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    display: none;
+    flex-direction: column;
+    z-index:1200;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .goya-header {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    padding:12px 14px;
+    border-bottom:1px solid #f0f0f0;
+    background: linear-gradient(180deg,#fff,#fafafa);
+  }
+  .goya-avatar {
+    width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:#000; color:#fff; font-weight:700;
+  }
+  .goya-title { font-weight:700; font-size:15px; }
+  .goya-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+
+  /* Chat content */
+  .goya-chat {
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    overflow-y:auto;
+    background:transparent;
+  }
+  .goya-msg { display:flex; gap:10px; }
+  .goya-msg.bot { justify-content:flex-start; }
+  .goya-msg.user { justify-content:flex-end; }
+  .goya-bubble {
+    max-width:78%;
+    padding:10px 12px;
+    border-radius:10px;
+    line-height:1.4;
+    border:1px solid #f0f0f0;
+    background:#fff;
+    color:var(--text);
+  }
+  .goya-bubble.user { background:transparent; border:1px solid #e6e6e6; }
+
+  /* Controls */
+  .goya-controls {
+    display:flex;
+    gap:8px;
+    padding:10px;
+    border-top:1px solid #f0f0f0;
+    align-items:center;
+    background: #fff;
+  }
+  .goya-btn {
+    padding:8px 10px;
+    border-radius:8px;
+    border:1px solid #e6e6e6;
+    background:transparent;
+    cursor:pointer;
+    font-weight:600;
+    color:#000;
+  }
+  .goya-btn.primary { background:#000; color:#fff; border:1px solid rgba(0,0,0,0.08); }
+
+  .goya-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+
+  /* make sure it looks fine on small screens */
+  @media (max-width:420px){
+    #goya-box { right: 10px; left:10px; width: auto; bottom: 80px; max-height: 70vh; border-radius:10px; }
+    #goya-icon { right: 10px; bottom: 18px; }
+  }
+
+  /* keep existing side icons but move them a bit so they don't overlap the new chat */
+  #side-icons { right: 100px; bottom: 90px; z-index:1100; }
+
+  /* small focus for accessibility */
+  button:focus, [role="button"]:focus { outline:3px solid rgba(0,0,0,0.06); outline-offset:3px; }
 </style>
 </head>
-
 <body>
 
-<div class="head">
-<!-- NAVBAR -->
-<nav>
-    <div class="logo">
-        <img src="img/logo.png" width="40" alt="logo">
+<div class="hero" role="banner">
+    <!-- Navbar -->
+    <div class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="logo">My Accessible Journey</div>
+        <ul>
+            <li><a href="homepage.html">home</a></li>
+            <li><a href="3DModel.html">3DModel</a></li>
+            <li><a href="map.html">Map</a></li>
+            <li><a href="trip.html">travel</a></li>
+            <li><a href="chart.html">Dashbourd</a></li>
+            <li><a href="about.html">about</a></li>
+            <li><a class="signup-btn" href="index.html">log out </a></li>
+        </ul>
     </div>
 
-    <div class="nav-links">
-        <a href="#">home</a>
-        <a href="#">plan trip</a>
-        <a href="#">Map</a>
-        <a href="#">travel</a>
-        <a href="#" class="logout-btn">Log Out</a>
-    </div>
-</nav>
-
-<!-- HERO -->
-<header>
-    <div class="hero">
+    <!-- Hero Text -->
+    <div class="content">
         <h1>My Accessible Journey</h1>
         <p>Every journey has a story. Start yours today.</p>
+        <a href="trip.html" class="start-btn">Join a Trip</a>
     </div>
-</header>
 </div>
 
+<div class="section-container" role="main" aria-labelledby="main-title">
+  <h1 id="main-title" class="sr-only">My Accessible Journey main content</h1>
 
-<!-- ========= SECTION 1: EVENTS ========= -->
-<section class="section" style="background:#fafafa;">
-    <div class="events-card">
-        <h2>Upcoming Events</h2>
+  <!-- Row 1 -->
+  <div class="row">
+      <div class="text-block">
+          <h2>Travel Made Accessible</h2>
+          <p>My Accessible Journey simplifies travel for all, using smart AI
+             to create personalized plans and recommend places that fit your needs.</p>
+          <a class="btn" href="#">start now to use all this</a>
+      </div>
 
-        <div class="event-item">
-            <h3>Accessible Hiking Day</h3>
-            <p>Date: 12 Jan 2025</p>
+      <div class="image-block">
+          <img src="img/img1.png" alt="Travel Accessible Image">
+      </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="row">
+      <div class="image-block">
+          <img src="img/img2.png" alt="Volunteer Image">
+      </div>
+
+      <div class="text-block">
+          <h2>Join a Volunteer Experience</h2>
+          <p>Create meaningful moments and meet like-minded people. By volunteering,
+             you become part of a human-centered travel experience.</p>
+          <a class="btn" href="#">start now to use all this</a>
+      </div>
+  </div>
+
+  <main class="wrap" role="main" aria-labelledby="what-we-offer-title">
+    <section class="section" aria-label="What we offer">
+      <div class="left">
+        <h2 id="what-we-offer-title">What We Offer</h2>
+
+        <div class="item" aria-labelledby="personalized-title">
+          <h3 id="personalized-title">Personalized Trip Planning</h3>
+          <p>AI plans your trip according to your abilities and needs, suggesting places, activities, and hotels safely and accessibly.</p>
         </div>
 
-        <div class="event-item">
-            <h3>Petra Guided Tour</h3>
-            <p>Date: 5 Feb 2025</p>
+        <div class="item" aria-labelledby="detailed-title">
+          <h3 id="detailed-title">Detailed Travel Information</h3>
+          <p>Discover every place before visiting: restaurants, activities, facilities, accessibility level — all presented clearly and simply.</p>
         </div>
 
-        <div class="event-item">
-            <h3>Dead Sea Wellness Trip</h3>
-            <p>Date: 20 Feb 2025</p>
+        <div class="item" aria-labelledby="community-title">
+          <h3 id="community-title">Supportive Community &amp; Volunteers</h3>
+          <p>Join a community with shared interests, connect with fellow travelers, and enjoy safe and fun trips supported by trained volunteers.</p>
         </div>
+
+        <a class="cta" href="#start">Start your journey</a>
+      </div>
+
+      <div class="image-card" aria-hidden="false">
+        <img src="img/img3.png" alt="A person walking with a cane and a companion along a palm-lined promenade by the sea">
+      </div>
+    </section>
+  </main>
+
+  <div class="sectioncontainer">
+      <h2>Travel Designed for Everyone</h2>
+
+      <div class="grid">
+          <!-- Items... (kept same) -->
+          <div class="item">
+              <div class="icon" aria-hidden="true">🌐</div>
+              <div>
+                  <h3>A Fully Voice-Enabled Experience</h3>
+                  <p>Listen to everything you need — maps, hotel details, reviews, and travel tips, all read aloud with clear audio guidance.</p>
+              </div>
+          </div>
+
+          <div class="item">
+              <div class="icon" aria-hidden="true">🗣️</div>
+              <div>
+                  <h3>Speech Communication</h3>
+                  <p>Write or read with ease. The platform converts text to speech and turns spoken words into written text instantly.</p>
+              </div>
+          </div>
+
+          <div class="item">
+              <div class="icon" aria-hidden="true">🔒</div>
+              <div>
+                  <h3>Accessible 3D Maps & Safe Pathways</h3>
+                  <p>Explore 3D models of hotels, attractions, and city routes with accessible pathway information.</p>
+              </div>
+          </div>
+
+          <div class="item">
+              <div class="icon" aria-hidden="true">📅</div>
+              <div>
+                  <h3>A Supportive Community & Trained Volunteers</h3>
+                  <p>Connect with travelers who share your interests and needs. Join group trips supported by trained volunteers.</p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+</div>
+
+<!-- Stats Section -->
+<section class="stats-section" aria-labelledby="stats-title">
+  <div class="stats-inner">
+    <div class="left-col">
+      <h2 id="stats-title" class="page-title">Why This Platform Matters?</h2>
+
+      <div class="cards-column">
+        <article class="stat-card">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 11a4 4 0 1 0-8 0"/>
+              <path d="M2 21v-2a4 4 0 0 1 4-4h4"/>
+              <path d="M22 21v-2a4 4 0 0 0-4-4h-1"/>
+            </svg>
+          </div>
+          <h3>Local community</h3>
+          <p class="muted-strong">1,250,000 people</p>
+          <p class="muted">A whole community in need of accessible travel solutions — and we are ready to serve them.</p>
+        </article>
+
+        <article class="stat-card">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="7" width="18" height="13" rx="2"/>
+              <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+            </svg>
+          </div>
+          <h3>Travel Interest</h3>
+          <p class="muted-strong">250,000 potential travelers</p>
+          <p class="muted">Their journeys are on hold… not because they lack the will, but because they lack the right tools.</p>
+        </article>
+
+        <article class="stat-card">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 8.5l1.6 3.25L17 12l-2.6 2.05L13.2 17 12 14.85 10.8 17l-.6-2.95L7.6 12l3.4-.25L12 8.5z"/>
+            </svg>
+          </div>
+          <h3>Active Users</h3>
+          <p class="muted-strong">Up to 175,000 active users</p>
+          <p class="muted">Ready to find in our platform the travel companion no other app has offered them before.</p>
+        </article>
+      </div>
     </div>
+
+    <aside class="right-col" aria-label="Demand chart">
+      <div class="donut-wrap">
+        <div class="pie-chart" data-percent="35" aria-hidden="true"></div>
+
+        <div class="center-text" id="donut-value" aria-live="polite">
+          <strong class="percent">35%</strong>
+          <span class="label">Travel Demand</span>
+        </div>
+      </div>
+
+      <div class="kpi-row" role="list">
+        <div class="kpi" role="listitem">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 8v4l2 2"/>
+            </svg>
+          </div>
+          <div class="kpi-num">100</div>
+          <div class="kpi-label">Body text</div>
+        </div>
+
+        <div class="kpi" role="listitem">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="14" rx="2"/>
+              <path d="M8 2v4"/>
+            </svg>
+          </div>
+          <div class="kpi-num">100</div>
+          <div class="kpi-label">Body text</div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
 </section>
 
-
-<!-- ========= SECTION 2 ========= -->
-<section class="section">
-    <div class="text">
-        <h2>Personalized Travel Experience</h2>
-        <p>Our platform helps you discover accessible destinations tailored to your needs. Plan your journey easily with tools built for everyone.</p>
+<footer class="site-footer" role="contentinfo" aria-label="Footer">
+  <div class="footer-inner">
+    <div class="footer-brand" aria-hidden="false">
+      <div class="brand-name"><img src="img/logo_black.png" alt="My Accessible Journey logo"></div>
+      <div class="social" aria-label="Social links">
+        <a href="#" aria-label="Facebook" title="Facebook" role="link"></a>
+        <a href="#" aria-label="LinkedIn" title="LinkedIn" role="link"></a>
+        <a href="#" aria-label="YouTube" title="YouTube" role="link"></a>
+        <a href="#" aria-label="Instagram" title="Instagram" role="link"></a>
+      </div>
     </div>
-    <img src="img/travel1.webp" alt="travel">
-</section>
 
+    <div class="footer-links" role="navigation" aria-label="Footer links">
+      <div class="links-column">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Destinations</a></li>
+          <li><a href="#">Volunteers</a></li>
+        </ul>
+      </div>
 
-<!-- ========= SECTION 3 ========= -->
-<section class="section" style="background:#f6f6f6;">
-    <img src="img/map.jpg" alt="map">
-    <div class="text">
-        <h2>Your Path, Clearly Marked</h2>
-        <p>Navigate with confidence using our accessibility-focused maps designed to guide you safely through every trip.</p>
+      <div class="links-column">
+        <h4>Community</h4>
+        <ul>
+          <li><a href="#">Share Your Experience</a></li>
+          <li><a href="#">Success Stories</a></li>
+          <li><a href="#">Feedback</a></li>
+        </ul>
+      </div>
+
+      <div class="links-column">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">Accessibility Help</a></li>
+        </ul>
+      </div>
     </div>
-</section>
+  </div>
+</footer>
+
+<!-- ===== GOYA CHATBOT (replaces old chatbot) ===== -->
+<div id="goya-icon" role="button" aria-label="فتح الدردشة" tabindex="0">💬</div>
+
+<div id="goya-box" role="dialog" aria-label="مساعد الرحّال" aria-hidden="true">
+  <div class="goya-header">
+    <div class="goya-avatar" aria-hidden>G</div>
+    <div>
+      <div class="goya-title">GOYA — مساعد الرحّال</div>
+      <div class="goya-sub">plan your trip</div>
+    </div>
+  </div>
+
+  <div class="goya-chat" id="goya-chat" aria-live="polite" aria-atomic="false"></div>
+
+  <div class="goya-controls" id="goya-controls">
+    <button class="goya-btn primary" id="goya-start" aria-label="جهّز رحلة">جهّز لي رحلة</button>
+    <button class="goya-btn" id="goya-changeName" aria-label="تغيير الاسم"> ( محمد)</button>
+    <div style="margin-inline-start:auto; display:flex; gap:8px; align-items:center;">
+      <button class="goya-btn" id="goya-voiceInput" aria-pressed="false" title="تحويل الصوت لنص">🎤</button>
+      <button class="goya-btn" id="goya-voiceOutput" aria-pressed="false" title="قراءة الرد">🔊</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== existing donut script (unchanged) ===== -->
+<script>
+  (function () {
+    const pie = document.querySelector('.pie-chart');
+    if (!pie) return;
+    const percent = Math.max(0, Math.min(100, Number(pie.getAttribute('data-percent') || 0)));
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6b3b20';
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--donut-bg').trim() || '#efecec';
+    pie.style.background = `conic-gradient(${accent} 0% ${percent}%, ${bg} ${percent}% 100%)`;
+    const center = document.getElementById('donut-value');
+    if (center) center.querySelector('.percent').textContent = percent + '%';
+  })();
+</script>
+
+<!-- ===== GOYA chatbot script (new) ===== -->
+<script>
+  (function () {
+    // Elements
+    const icon = document.getElementById('goya-icon');
+    const box = document.getElementById('goya-box');
+    const chat = document.getElementById('goya-chat');
+    const startBtn = document.getElementById('goya-start');
+    const changeNameBtn = document.getElementById('goya-changeName');
+    const voiceInputBtn = document.getElementById('goya-voiceInput');
+    const voiceOutputBtn = document.getElementById('goya-voiceOutput');
+
+    // state
+    let userName = 'محمد';
+    let recognition;
+    let lastBotText = '';
+
+    // accessibility helpers
+    function announce(text){
+      // optionally add an offscreen element or rely on aria-live on chat container
+      // chat has aria-live, so appending a bot message is sufficient
+    }
+
+    // Render message
+    function appendMessage(html, who='bot'){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'goya-msg ' + (who === 'bot' ? 'bot' : 'user');
+      const bubble = document.createElement('div');
+      bubble.className = 'goya-bubble' + (who === 'user' ? ' user' : '');
+      bubble.innerHTML = html;
+      wrapper.appendChild(bubble);
+      chat.appendChild(wrapper);
+      chat.scrollTop = chat.scrollHeight;
+      if(who === 'bot') lastBotText = bubble.innerText || bubble.textContent || '';
+    }
+
+    // small typing simulation then final
+    async function botSay(text, {delay = 300} = {}){
+      // show typing
+      const typing = document.createElement('div');
+      typing.className = 'goya-msg bot';
+      typing.innerHTML = '<div class="goya-bubble">...</div>';
+      chat.appendChild(typing);
+      chat.scrollTop = chat.scrollHeight;
+      await new Promise(r => setTimeout(r, delay));
+      typing.remove();
+      appendMessage(text, 'bot');
+      announce(text);
+    }
+
+    // initial greeting
+    function greet(){
+      const t = `مرحباً ${userName}، يسعدنا نجهّز لك خُطّة رحلة مناسبة. جاهز؟`;
+      botSay(t, {delay: 350});
+    }
+
+    // open/close handlers
+    function openBox(){
+      box.style.display = 'flex';
+      box.setAttribute('aria-hidden', 'false');
+      // if empty, greet
+      if(chat.innerHTML.trim() === '') greet();
+    }
+    function closeBox(){
+      box.style.display = 'none';
+      box.setAttribute('aria-hidden', 'true');
+    }
+
+    icon.addEventListener('click', () => {
+      if(box.style.display === 'flex') closeBox();
+      else openBox();
+    });
+    icon.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); icon.click(); } });
+
+    // Chat flows: start -> show choices -> Petra/DeadSea handlers
+    function showChoices(){
+      // show 2 buttons inside chat as quick replies
+      const controls = document.createElement('div');
+      controls.className = 'goya-actions';
+      const petra = document.createElement('button');
+      petra.className = 'goya-btn';
+      petra.type = 'button';
+      petra.textContent = 'البترا';
+      petra.onclick = () => { appendMessage('البترا', 'user'); petraHandler(); controls.remove(); };
+
+      const dead = document.createElement('button');
+      dead.className = 'goya-btn';
+      dead.type = 'button';
+      dead.textContent = 'البحر الميت';
+      dead.onclick = () => { appendMessage('البحر الميت', 'user'); deadSeaHandler(); controls.remove(); };
+
+      controls.appendChild(petra);
+      controls.appendChild(dead);
+      chat.appendChild(controls);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    startBtn.addEventListener('click', () => {
+      appendMessage('جهّز لي رحلة', 'user');
+      botSay(`أهلاً ${userName} — اختر وجهتك المفضلة أو أخبرني وجهة أخرى ترغب بها.
+1) البتراء
+2) البحر الميت`, {delay: 260}).then(()=> showChoices());
+    });
+
+    function petraHandler(){
+      const petraText = `اختيار رائع يا ${userName}! البتراء تجربة مدهشة — مسار مريح عبر السيق، محطات استراحة، ودعم تواصل بالإشارات والكتابة.
+<br><br>🗺️ <strong>مخطط مبسّط</strong><br>08:00 انطلاق — 10:00 وصول — 14:00 عودة
+<br><br><a href="petra_trip.html" target="_blank">تفاصيل الحجز</a>`;
+      botSay(petraText);
+    }
+
+    function deadSeaHandler(){
+      const deadText = `البحر الميت خيار هادئ ومريح — استرخاء، طين طبيعي، ومناطق جلوس مظللة.
+<br><br>🗺️ <strong>مخطط مبسّط</strong><br>09:00 انطلاق — 10:00 وصول — 16:30 عودة
+<br><br><a href="deadesa.html" target="_blank">تفاصيل الحجز</a>`;
+      botSay(deadText);
+    }
+
+    // change name
+    changeNameBtn.addEventListener('click', () => {
+      const newName = prompt('اكتب الاسم اللي تفضّل أن يُنادى به:', userName);
+      if(newName && newName.trim().length>0){
+        userName = newName.trim();
+        changeNameBtn.textContent = ` ( ${userName})`;
+        appendMessage(`${userName} (غيّر الاسم)`, 'user');
+        botSay(`تم تحديث الاسم إلى ${userName} — جاهز تكمل؟`);
+      }
+    });
+
+    // Text-to-Speech (reads last bot reply)
+    function speakText(text){
+      if(!('speechSynthesis' in window)) { alert('متصفحك لا يدعم قراءة النص صوتياً'); return; }
+      const clean = text.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '');
+      const u = new SpeechSynthesisUtterance(clean);
+      u.lang = 'ar-JO';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    }
+
+    voiceOutputBtn.addEventListener('click', () => {
+      if(!lastBotText) {
+        alert('لا يوجد رد لقراءته حالياً');
+        return;
+      }
+      speakText(lastBotText);
+    });
+
+    // Speech-to-Text (basic)
+    function initRecognition(){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR) return null;
+      const r = new SR();
+      r.lang = 'ar-JO';
+      r.interimResults = false;
+      r.continuous = false;
+      return r;
+    }
+
+    voiceInputBtn.addEventListener('click', () => {
+      if(!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+        alert('المتصفح لا يدعم تحويل الصوت إلى نص');
+        return;
+      }
+      recognition = initRecognition();
+      if(!recognition) { alert('تعذر تهيئة المحرر الصوتي'); return; }
+
+      appendMessage('🎤 ... جاري الاستماع', 'bot');
+      recognition.start();
+      recognition.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        appendMessage(text, 'user');
+        // You could route the text as a user input to the bot; for now show choices if contains keywords
+        const lower = text.toLowerCase();
+        if(lower.includes('بترا') || lower.includes('البتراء')) petraHandler();
+        else if(lower.includes('بحر') || lower.includes('مميت') || lower.includes('البحر')) deadSeaHandler();
+        else botSay('شكراً! يمكنك اختيار واحدة من الأزرار أو كتابة وجهة معينة.');
+      };
+      recognition.onerror = (err) => { console.error(err); };
+      recognition.onend = () => { /* nothing */ };
+    });
+
+    // keyboard support: close on Esc
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        if(box.style.display === 'flex') closeBox();
+      }
+    });
+
+    // ensure initial aria-hidden
+    box.setAttribute('aria-hidden', 'true');
+
+    // Expose small helper for programmatic open (optional)
+    window.GOYA = { open: openBox, close: closeBox };
+
+  })();
+</script>
+
+<!-- ===== Side icons behaviour & speech/tts boxes (unchanged) ===== -->
+<style>
+  /* side icon styles (reused from original) */
+  .icon-btn {
+    background-color: #4CAF50;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: background-color 0.3s;
+  }
+  .icon-btn:hover { background-color: #45a049; }
+  .hidden { display: none; }
+  #speech-box, #tts-box {
+    position: fixed;
+    right: 90px;
+    background-color: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    padding: 10px;
+    width: 300px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #speech-box { bottom: 90px; }
+  #tts-box { bottom: 160px; }
+  #speech-output { min-height: 60px; max-height: 200px; overflow-y: auto; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; line-height: 1.4; font-family: 'Segoe UI', sans-serif; }
+  #tts-input { width: 100%; font-size: 16px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; resize: none; }
+  button { cursor: pointer; padding: 6px 10px; border-radius: 6px; border: none; background-color: #4CAF50; color: white; font-size: 16px; }
+  button:hover { background-color: #45a049; }
+</style>
+
+<script>
+  // side icons toggle behaviour (kept from your original)
+  const micToggle = document.getElementById('mic-toggle');
+  const ttsToggle = document.getElementById('tts-toggle');
+  const speechBox = document.getElementById('speech-box');
+  const ttsBox = document.getElementById('tts-box');
+
+  const speechClose = document.getElementById('speech-close');
+  const ttsClose = document.getElementById('tts-close');
+
+  micToggle && micToggle.addEventListener('click', () => {
+    if(!speechBox) return;
+    const isHidden = speechBox.classList.contains('hidden');
+    if(isHidden) {
+      speechBox.classList.remove('hidden');
+      speechBox.setAttribute('aria-hidden','false');
+      startRecognitionSide();
+    } else {
+      speechBox.classList.add('hidden');
+      speechBox.setAttribute('aria-hidden','true');
+      stopRecognitionSide();
+    }
+  });
+
+  ttsToggle && ttsToggle.addEventListener('click', () => {
+    if(!ttsBox) return;
+    const isHidden = ttsBox.classList.contains('hidden');
+    if(isHidden) {
+      ttsBox.classList.remove('hidden');
+      ttsBox.setAttribute('aria-hidden','false');
+    } else {
+      ttsBox.classList.add('hidden');
+      ttsBox.setAttribute('aria-hidden','true');
+    }
+  });
+
+  speechClose && speechClose.addEventListener('click', () => {
+    speechBox.classList.add('hidden');
+    speechBox.setAttribute('aria-hidden','true');
+    stopRecognitionSide();
+  });
+  ttsClose && ttsClose.addEventListener('click', () => {
+    ttsBox.classList.add('hidden');
+    ttsBox.setAttribute('aria-hidden','true');
+  });
+
+  // side speech recognition (continuous)
+  let sideRecognition, sideListening = false;
+  function startRecognitionSide() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR) { alert('متصفحك لا يدعم تحويل الكلام لنص.'); return; }
+    sideRecognition = new SR();
+    sideRecognition.continuous = true;
+    sideRecognition.lang = 'ar-JO';
+    sideRecognition.onresult = (event) => {
+      const transcript = Array.from(event.results).map(r => r[0].transcript).join('');
+      const out = document.getElementById('speech-output');
+      if(out) out.textContent = transcript;
+    };
+    sideRecognition.onerror = (e) => { console.error("Speech error", e); };
+    sideRecognition.start();
+    sideListening = true;
+  }
+  function stopRecognitionSide() {
+    if(sideRecognition && sideListening) {
+      try { sideRecognition.stop(); } catch(e){}
+      sideListening = false;
+    }
+  }
+
+  // TTS button in tts-box
+  const ttsBtn = document.getElementById('tts-btn');
+  const ttsInput = document.getElementById('tts-input');
+  ttsBtn && ttsBtn.addEventListener('click', () => {
+    const text = (ttsInput && ttsInput.value.trim()) || '';
+    if(!text) return;
+    if('speechSynthesis' in window){
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ar-JO';
+      u.rate = 1;
+      u.pitch = 1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } else {
+      alert('متصفحك لا يدعم تحويل النص لصوت.');
+    }
+  });
+</script>
 
 </body>
 </html>
